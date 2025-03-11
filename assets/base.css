@@ -3605,3 +3605,7 @@ details-disclosure > details {
   background-color: red;
   z-index: 9999;
 }
+
+#fixed-rectangle.hovered {
+  background-color: blue;
+}
