@@ -1,154 +1,90 @@
 <div id="shopify-section-template--24432609624356__featured_rotating_products" class="shopify-section">
-  <div id="product-slider">
-    <!-- Контейнер для товару -->
-    <div class="slider-container">
-      <!-- Ліва стрілка (не активна для першого товару) -->
-      <button id="prev" class="arrow left" disabled>&#8592;</button>
+  <div id="product-slider" style="position: relative; text-align: center; width: 100%;">
 
-      <!-- Блок з товаром -->
-      <div class="product-item">
-        <img src="{{ collections.all.products[0].featured_image | img_url: 'medium' }}" alt="{{ collections.all.products[0].title }}">
-        <p>{{ collections.all.products[0].title }}</p>
-        <p>{{ collections.all.products[0].price | money }}</p>
-        <a href="{{ collections.all.products[0].url }}" class="btn btn-primary">View Product</a>
+    <!-- Лог для перевірки кількості продуктів -->
+    <p>Number of products: {{ collections.all.products.size }}</p>
+
+    <!-- Стрілки -->
+    <button id="prev" class="arrow-btn" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 24px; cursor: pointer;" disabled>←</button>
+    
+    <div id="slider-container" style="display: inline-block; overflow: hidden; width: 80%; margin: 0 auto;">
+      <!-- Виведення одного товару -->
+      <div id="slider-item" class="product-item" style="display: flex; justify-content: center; transition: transform 0.5s;">
+        <!-- Товар з рамкою по середині -->
+        {% for product in collections.all.products %}
+          <div class="product" style="flex-shrink: 0; width: 200px; padding: 10px; text-align: center;">
+            <!-- Зображення продукту -->
+            <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}" style="max-width: 100%; height: auto;">
+            <!-- Назва продукту -->
+            <p>{{ product.title }}</p>
+            <!-- Ціна продукту -->
+            <p>{{ product.price | money }}</p>
+            <!-- Кнопка для відкриття товару -->
+            <a href="{{ product.url }}" class="btn btn-primary">View Product</a>
+          </div>
+        {% endfor %}
       </div>
-
-      <!-- Права стрілка (активна) -->
-      <button id="next" class="arrow right">&#8594;</button>
     </div>
 
-    <!-- Кружечки для індикації -->
-    <div id="dots" class="dots-container">
-      {% for product in collections.all.products %}
-        <span class="dot"></span>
+    <!-- Стрілка вправо -->
+    <button id="next" class="arrow-btn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 24px; cursor: pointer;">→</button>
+    
+    <!-- Індикація перемикання товарів -->
+    <div id="indicator" style="margin-top: 20px;">
+      {% for i in (0..collections.all.products.size-1) %}
+        <span class="dot" style="display: inline-block; width: 10px; height: 10px; background-color: #bbb; border-radius: 50%; margin: 0 5px; cursor: pointer;"></span>
       {% endfor %}
     </div>
   </div>
 </div>
 
-<!-- Стилі -->
-<style>
-  .slider-container {
-    position: relative;
-    width: 60%;
-    margin: 0 auto;
-    text-align: center;
-  }
-
-  .product-item {
-    border: 2px solid #ccc;
-    padding: 20px;
-    display: inline-block;
-    width: 100%;
-  }
-
-  .product-item img {
-    width: 100%;
-    height: auto;
-  }
-
-  .arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    font-size: 24px;
-    padding: 10px;
-    cursor: pointer;
-  }
-
-  .left {
-    left: 0;
-  }
-
-  .right {
-    right: 0;
-  }
-
-  .dots-container {
-    text-align: center;
-    margin-top: 20px;
-  }
-
-  .dot {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    margin: 0 5px;
-    border-radius: 50%;
-    background-color: #ccc;
-    cursor: pointer;
-  }
-
-  .active-dot {
-    background-color: #333;
-  }
-</style>
-
-<!-- Скрипт -->
 <script>
-  let currentIndex = 0;
   const products = {{ collections.all.products | json }};
+  let currentIndex = 0;
   const totalProducts = products.length;
+  const sliderContainer = document.getElementById('slider-item');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  const dots = document.querySelectorAll('.dot');
+  
+  // Оновлення стану кнопок та індикаторів
+  function updateUI() {
+    prevBtn.disabled = currentIndex === 0;
+    nextBtn.disabled = currentIndex === totalProducts - 1;
 
-  const prevButton = document.getElementById('prev');
-  const nextButton = document.getElementById('next');
-  const dotsContainer = document.getElementById('dots');
+    // Оновлюємо положення слайдера
+    sliderContainer.style.transform = `translateX(-${currentIndex * 220}px)`;
 
-  function updateProductDisplay() {
-    const product = products[currentIndex];
-
-    // Виводимо зображення та інформацію про товар
-    const productItem = document.querySelector('.product-item');
-    productItem.innerHTML = `
-      <img src="${product.featured_image | img_url: 'medium'}" alt="${product.title}">
-      <p>${product.title}</p>
-      <p>${product.price | money}</p>
-      <a href="${product.url}" class="btn btn-primary">View Product</a>
-    `;
-
-    // Оновлюємо активність стрілок
-    prevButton.disabled = currentIndex === 0;
-    nextButton.disabled = currentIndex === totalProducts - 1;
-
-    // Оновлюємо активні кружечки
-    const dots = document.querySelectorAll('.dot');
+    // Оновлюємо індикатор
     dots.forEach((dot, index) => {
-      dot.classList.toggle('active-dot', index === currentIndex);
+      dot.style.backgroundColor = index === currentIndex ? 'black' : '#bbb';
     });
   }
 
-  function handlePrevClick() {
-    if (currentIndex > 0) {
-      currentIndex--;
-      updateProductDisplay();
-    }
-  }
-
-  function handleNextClick() {
+  // Перехід до наступного продукту
+  function nextProduct() {
     if (currentIndex < totalProducts - 1) {
       currentIndex++;
-      updateProductDisplay();
+      updateUI();
     }
   }
 
-  // Ініціалізація
-  prevButton.addEventListener('click', handlePrevClick);
-  nextButton.addEventListener('click', handleNextClick);
+  // Перехід до попереднього продукту
+  function prevProduct() {
+    if (currentIndex > 0) {
+      currentIndex--;
+      updateUI();
+    }
+  }
 
-  // Ініціалізація кружечків
-  products.forEach((product, index) => {
-    const dot = document.createElement('span');
-    dot.classList.add('dot');
-    dot.addEventListener('click', () => {
-      currentIndex = index;
-      updateProductDisplay();
-    });
-    dotsContainer.appendChild(dot);
-  });
+  // Автоперехід кожні 15 секунд
+  setInterval(nextProduct, 15000);
 
-  // Початковий показ
-  updateProductDisplay();
+  // Додаємо слухачів подій для кнопок
+  nextBtn.addEventListener('click', nextProduct);
+  prevBtn.addEventListener('click', prevProduct);
+
+  // Оновлення інтерфейсу при завантаженні сторінки
+  updateUI();
 </script>
+
