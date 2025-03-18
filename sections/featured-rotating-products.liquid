@@ -1,20 +1,154 @@
 <div id="shopify-section-template--24432609624356__featured_rotating_products" class="shopify-section">
   <div id="product-slider">
-    <!-- Лог для перевірки кількості продуктів -->
-    <p>Number of products: {{ collections.all.products.size }}</p>
+    <!-- Контейнер для товару -->
+    <div class="slider-container">
+      <!-- Ліва стрілка (не активна для першого товару) -->
+      <button id="prev" class="arrow left" disabled>&#8592;</button>
 
-    <!-- Виведення назви, зображення, ціни та кнопки для кожного продукту -->
-    {% for product in collections.all.products %}
+      <!-- Блок з товаром -->
       <div class="product-item">
-        <!-- Зображення продукту -->
-        <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
-        <!-- Назва продукту -->
-        <p>{{ product.title }}</p>
-        <!-- Ціна продукту -->
-        <p>{{ product.price | money }}</p>
-        <!-- Кнопка для відкриття товару -->
-        <a href="{{ product.url }}" class="btn btn-primary">View Product</a>
+        <img src="{{ collections.all.products[0].featured_image | img_url: 'medium' }}" alt="{{ collections.all.products[0].title }}">
+        <p>{{ collections.all.products[0].title }}</p>
+        <p>{{ collections.all.products[0].price | money }}</p>
+        <a href="{{ collections.all.products[0].url }}" class="btn btn-primary">View Product</a>
       </div>
-    {% endfor %}
+
+      <!-- Права стрілка (активна) -->
+      <button id="next" class="arrow right">&#8594;</button>
+    </div>
+
+    <!-- Кружечки для індикації -->
+    <div id="dots" class="dots-container">
+      {% for product in collections.all.products %}
+        <span class="dot"></span>
+      {% endfor %}
+    </div>
   </div>
 </div>
+
+<!-- Стилі -->
+<style>
+  .slider-container {
+    position: relative;
+    width: 60%;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .product-item {
+    border: 2px solid #ccc;
+    padding: 20px;
+    display: inline-block;
+    width: 100%;
+  }
+
+  .product-item img {
+    width: 100%;
+    height: auto;
+  }
+
+  .arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    font-size: 24px;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .left {
+    left: 0;
+  }
+
+  .right {
+    right: 0;
+  }
+
+  .dots-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    border-radius: 50%;
+    background-color: #ccc;
+    cursor: pointer;
+  }
+
+  .active-dot {
+    background-color: #333;
+  }
+</style>
+
+<!-- Скрипт -->
+<script>
+  let currentIndex = 0;
+  const products = {{ collections.all.products | json }};
+  const totalProducts = products.length;
+
+  const prevButton = document.getElementById('prev');
+  const nextButton = document.getElementById('next');
+  const dotsContainer = document.getElementById('dots');
+
+  function updateProductDisplay() {
+    const product = products[currentIndex];
+
+    // Виводимо зображення та інформацію про товар
+    const productItem = document.querySelector('.product-item');
+    productItem.innerHTML = `
+      <img src="${product.featured_image | img_url: 'medium'}" alt="${product.title}">
+      <p>${product.title}</p>
+      <p>${product.price | money}</p>
+      <a href="${product.url}" class="btn btn-primary">View Product</a>
+    `;
+
+    // Оновлюємо активність стрілок
+    prevButton.disabled = currentIndex === 0;
+    nextButton.disabled = currentIndex === totalProducts - 1;
+
+    // Оновлюємо активні кружечки
+    const dots = document.querySelectorAll('.dot');
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active-dot', index === currentIndex);
+    });
+  }
+
+  function handlePrevClick() {
+    if (currentIndex > 0) {
+      currentIndex--;
+      updateProductDisplay();
+    }
+  }
+
+  function handleNextClick() {
+    if (currentIndex < totalProducts - 1) {
+      currentIndex++;
+      updateProductDisplay();
+    }
+  }
+
+  // Ініціалізація
+  prevButton.addEventListener('click', handlePrevClick);
+  nextButton.addEventListener('click', handleNextClick);
+
+  // Ініціалізація кружечків
+  products.forEach((product, index) => {
+    const dot = document.createElement('span');
+    dot.classList.add('dot');
+    dot.addEventListener('click', () => {
+      currentIndex = index;
+      updateProductDisplay();
+    });
+    dotsContainer.appendChild(dot);
+  });
+
+  // Початковий показ
+  updateProductDisplay();
+</script>
