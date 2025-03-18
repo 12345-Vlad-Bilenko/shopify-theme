@@ -7,11 +7,11 @@
     <!-- Стрілки -->
     <button id="prev" class="arrow-btn" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 24px; cursor: pointer;" disabled>←</button>
     
-    <div id="slider-container" style="display: inline-block; overflow: hidden; width: 80%; margin: 0 auto;">
+    <div id="slider-container" style="display: flex; overflow: hidden; justify-content: center; width: 100%; margin: 0 auto; position: relative;">
       <!-- Виведення одного активного товару -->
-      <div id="slider-item" class="product-item" style="display: flex; justify-content: center; transition: transform 0.5s;">
+      <div id="slider-item" class="product-item" style="display: flex; transition: transform 0.5s;">
         {% for product in collections.all.products %}
-          <div class="product {% if forloop.index0 == 0 %}active{% endif %}" style="flex-shrink: 0; width: 200px; padding: 10px; text-align: center; transition: transform 0.5s; opacity: 1;">
+          <div class="product {% if forloop.index0 == 0 %}active{% endif %}" style="flex-shrink: 0; width: 200px; padding: 10px; text-align: center; transition: transform 0.5s; opacity: 1; margin: 0 10px;">
             <!-- Зображення продукту -->
             <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}" style="max-width: 100%; height: auto; transition: transform 0.5s; border-radius: 5px;">
             <!-- Назва продукту -->
@@ -67,11 +67,13 @@
         item.style.transform = 'scale(1)'; // Активний продукт - більший
         item.style.opacity = '1'; // Чіткий
         item.querySelector('img').style.transform = 'scale(1.2)'; // Зображення активного продукту буде більшим
+        item.style.margin = '0 0'; // Відсутність відступів для активного товару
       } else {
         item.classList.remove('active'); // Видаляємо клас active для неактивних товарів
         item.style.transform = 'scale(0.8)'; // Неактивний продукт - менший
         item.style.opacity = '0.5'; // Полупрозорий
         item.querySelector('img').style.transform = 'scale(0.8)'; // Зображення неактивного продукту буде меншим
+        item.style.margin = '0 10px'; // Відступи для неактивних товарів
       }
     });
   }
@@ -105,12 +107,13 @@
 
 <style>
   .product {
-    transition: transform 0.5s ease, opacity 0.5s ease;
+    transition: transform 0.5s ease, opacity 0.5s ease, margin 0.5s ease;
   }
 
   .product.active {
     transform: scale(1) !important;  /* Активний товар - більший */
     opacity: 1 !important;  /* Чіткий */
+    margin: 0 0 !important;  /* Без відступів для активного товару */
   }
 
   .product img {
