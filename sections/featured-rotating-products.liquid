@@ -1,17 +1,14 @@
 <div id="shopify-section-template--24432609624356__featured_rotating_products" class="shopify-section">
-  <div id="product-slider" style="position: relative; text-align: center; width: 100%; margin: 0 auto;">
+  <div id="product-slider" style="position: relative; text-align: center; width: 33%; margin: 0 auto;">
 
     <!-- Лог для перевірки кількості продуктів -->
     <p>Number of products: {{ collections.all.products.size }}</p>
 
-    <!-- Стрілки -->
-    <button id="prev" class="arrow-btn" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 24px; cursor: pointer;" disabled>←</button>
-    
     <div id="slider-container" style="display: flex; overflow: hidden; justify-content: center; width: 100%; margin: 0 auto; position: relative;">
       <!-- Виведення одного активного товару -->
       <div id="slider-item" class="product-item" style="display: flex; transition: transform 0.5s;">
         {% for product in collections.all.products %}
-          <div class="product {% if forloop.index0 == 0 %}active{% endif %}" style="flex-shrink: 0; width: 200px; padding: 10px; text-align: center; transition: transform 0.5s; opacity: 1; margin: 0 10px;">
+          <div class="product {% if forloop.index0 == 0 %}active{% endif %}" style="flex-shrink: 0; width: 200px; padding: 10px; text-align: center; transition: transform 0.5s; opacity: 1; margin: 0 10px; cursor: pointer;">
             <!-- Зображення продукту -->
             <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}" style="max-width: 100%; height: auto; transition: transform 0.5s; border-radius: 5px;">
             <!-- Назва продукту -->
@@ -24,10 +21,6 @@
         {% endfor %}
       </div>
     </div>
-
-    <!-- Стрілка вправо -->
-    <button id="next" class="arrow-btn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 24px; cursor: pointer;">→</button>
-    
   </div>
 </div>
 
@@ -36,15 +29,10 @@
   let currentIndex = 0;
   const totalProducts = products.length;
   const sliderContainer = document.getElementById('slider-item');
-  const prevBtn = document.getElementById('prev');
-  const nextBtn = document.getElementById('next');
   const productItems = document.querySelectorAll('.product');
 
-  // Оновлення стану кнопок та інтерфейсу
+  // Оновлення стану інтерфейсу
   function updateUI() {
-    prevBtn.disabled = currentIndex === 0;
-    nextBtn.disabled = currentIndex === totalProducts - 1;
-
     // Оновлюємо положення слайдера
     sliderContainer.style.transform = `translateX(-${currentIndex * 220}px)`;
 
@@ -66,28 +54,18 @@
     });
   }
 
-  // Перехід до наступного продукту
-  function nextProduct() {
-    if (currentIndex < totalProducts - 1) {
-      currentIndex++;
-      updateUI();
-    }
+  // Функція для активації товару
+  function activateProduct(index) {
+    currentIndex = index;
+    updateUI();
   }
 
-  // Перехід до попереднього продукту
-  function prevProduct() {
-    if (currentIndex > 0) {
-      currentIndex--;
-      updateUI();
-    }
-  }
-
-  // Автоперехід кожні 15 секунд
-  setInterval(nextProduct, 15000);
-
-  // Додаємо слухачів подій для кнопок
-  nextBtn.addEventListener('click', nextProduct);
-  prevBtn.addEventListener('click', prevProduct);
+  // Додаємо слухачів подій на неактивні продукти
+  productItems.forEach((item, index) => {
+    item.addEventListener('click', () => {
+      activateProduct(index);
+    });
+  });
 
   // Оновлення інтерфейсу при завантаженні сторінки
   updateUI();
@@ -114,7 +92,7 @@
 
   /* Стилі для самого слайдера */
   #product-slider {
-    width: 100%; /* Ширина слайдера 100% від ширини екрану */
+    width: 33%; /* Ширина слайдера 33% від ширини екрану */
     margin: 0 auto; /* Центрування по горизонталі */
   }
 </style>
