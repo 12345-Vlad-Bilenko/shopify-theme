@@ -1,24 +1,6 @@
-{% assign products = collections.all.products | slice: 0, 6 %}
-
-<div id="product-slider">
-  <!-- Лог для перевірки кількості продуктів -->
-  <p>Number of products: {{ products.size }}</p>
-
-  {% if products.size > 0 %}
-    {% for product in products %}
-      <!-- Лог для перевірки даних кожного продукту -->
-      <p>Product Title: {{ product.title }}</p>
-      
-      <div class="product-item">
-        <a href="{{ product.url }}">
-          <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
-          <h3 id="test55">{{ product.title }}</h3>
-          <h6>test</h6>
-          <p>{{ product.price | money }}</p>
-        </a>
-      </div>
-    {% endfor %}
-  {% else %}
-    <p>No products found</p>
-  {% endif %}
+<div id="shopify-section-template--24432609624356__featured_rotating_products" class="shopify-section">
+  <div id="product-slider">
+    <p>Dumping the products array:</p>
+    <pre>{{ collections.all.products | json }}</pre>
+  </div>
 </div>
