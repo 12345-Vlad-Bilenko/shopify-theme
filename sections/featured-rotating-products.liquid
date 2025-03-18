@@ -8,7 +8,8 @@
       <!-- Виведення одного активного товару -->
       <div id="slider-item" class="product-item" style="display: flex; transition: transform 0.5s;">
         {% for product in collections.all.products %}
-          <div class="product {% if forloop.index0 == 0 %}active{% endif %}" style="flex-shrink: 0; width: 200px; padding: 10px; text-align: center; transition: transform 0.5s; opacity: 1; margin: 0 10px; cursor: pointer;">
+          <div class="product {% if forloop.index0 == 0 %}active{% endif %}" 
+               style="flex-shrink: 0; width: 200px; padding: 10px; text-align: center; transition: transform 0.5s; opacity: 1; margin: 0 10px; cursor: pointer;">
             <!-- Зображення продукту -->
             <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}" style="max-width: 100%; height: auto; transition: transform 0.5s; border-radius: 5px;">
             <!-- Назва продукту -->
@@ -21,6 +22,7 @@
         {% endfor %}
       </div>
     </div>
+
   </div>
 </div>
 
@@ -31,7 +33,7 @@
   const sliderContainer = document.getElementById('slider-item');
   const productItems = document.querySelectorAll('.product');
 
-  // Оновлення стану інтерфейсу
+  // Оновлення вигляду продуктів
   function updateUI() {
     // Оновлюємо положення слайдера
     sliderContainer.style.transform = `translateX(-${currentIndex * 220}px)`;
@@ -54,18 +56,32 @@
     });
   }
 
-  // Функція для активації товару
-  function activateProduct(index) {
-    currentIndex = index;
-    updateUI();
+  // Перехід до наступного продукту
+  function nextProduct() {
+    if (currentIndex < totalProducts - 1) {
+      currentIndex++;
+      updateUI();
+    }
   }
 
-  // Додаємо слухачів подій на неактивні продукти
+  // Перехід до попереднього продукту
+  function prevProduct() {
+    if (currentIndex > 0) {
+      currentIndex--;
+      updateUI();
+    }
+  }
+
+  // Перехід на продукт по кліку
   productItems.forEach((item, index) => {
     item.addEventListener('click', () => {
-      activateProduct(index);
+      currentIndex = index;
+      updateUI();
     });
   });
+
+  // Автоперехід кожні 15 секунд
+  setInterval(nextProduct, 15000);
 
   // Оновлення інтерфейсу при завантаженні сторінки
   updateUI();
@@ -94,5 +110,16 @@
   #product-slider {
     width: 33%; /* Ширина слайдера 33% від ширини екрану */
     margin: 0 auto; /* Центрування по горизонталі */
+  }
+
+  #slider-item {
+    display: flex;
+    overflow: hidden;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .product {
+    cursor: pointer;
   }
 </style>
