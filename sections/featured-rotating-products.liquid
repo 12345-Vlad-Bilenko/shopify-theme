@@ -1,9 +1,16 @@
- <div id="product-slider">
+<div id="shopify-section-template--24432609624356__featured_rotating_products" class="shopify-section">
+  <div id="product-slider">
     <!-- Лог для перевірки кількості продуктів -->
     <p>Number of products: {{ collections.all.products.size }}</p>
 
-    <!-- Виведення лише назви кожного продукту -->
+    <!-- Виведення назви і зображення кожного продукту -->
     {% for product in collections.all.products %}
-      <p>{{ product.title }}</p>
+      <div class="product-item">
+        <!-- Зображення продукту -->
+        <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
+        <!-- Назва продукту -->
+        <p>{{ product.title }}</p>
+      </div>
     {% endfor %}
   </div>
+</div>
