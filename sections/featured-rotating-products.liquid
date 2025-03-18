@@ -3,7 +3,7 @@
     <!-- Лог для перевірки кількості продуктів -->
     <p>Number of products: {{ collections.all.products.size }}</p>
 
-    <!-- Виведення назви, зображення та ціни кожного продукту -->
+    <!-- Виведення назви, зображення, ціни та кнопки для кожного продукту -->
     {% for product in collections.all.products %}
       <div class="product-item">
         <!-- Зображення продукту -->
@@ -12,6 +12,8 @@
         <p>{{ product.title }}</p>
         <!-- Ціна продукту -->
         <p>{{ product.price | money }}</p>
+        <!-- Кнопка для відкриття товару -->
+        <a href="{{ product.url }}" class="btn btn-primary">View Product</a>
       </div>
     {% endfor %}
   </div>
