@@ -28,12 +28,6 @@
     <!-- Стрілка вправо -->
     <button id="next" class="arrow-btn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 24px; cursor: pointer;">→</button>
     
-    <!-- Індикація перемикання товарів -->
-    <div id="indicator" style="margin-top: 20px;">
-      {% for i in (0..collections.all.products.size-1) %}
-        <span class="dot" style="display: inline-block; width: 10px; height: 10px; background-color: #bbb; border-radius: 50%; margin: 0 5px; cursor: pointer;"></span>
-      {% endfor %}
-    </div>
   </div>
 </div>
 
@@ -44,21 +38,15 @@
   const sliderContainer = document.getElementById('slider-item');
   const prevBtn = document.getElementById('prev');
   const nextBtn = document.getElementById('next');
-  const dots = document.querySelectorAll('.dot');
   const productItems = document.querySelectorAll('.product');
 
-  // Оновлення стану кнопок та індикаторів
+  // Оновлення стану кнопок та інтерфейсу
   function updateUI() {
     prevBtn.disabled = currentIndex === 0;
     nextBtn.disabled = currentIndex === totalProducts - 1;
 
     // Оновлюємо положення слайдера
     sliderContainer.style.transform = `translateX(-${currentIndex * 220}px)`;
-
-    // Оновлюємо індикатор
-    dots.forEach((dot, index) => {
-      dot.style.backgroundColor = index === currentIndex ? 'black' : '#bbb';
-    });
 
     // Оновлення вигляду продуктів
     productItems.forEach((item, index) => {
