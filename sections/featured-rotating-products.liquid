@@ -1,6 +1,9 @@
-<div id="shopify-section-template--24432609624356__featured_rotating_products" class="shopify-section">
-  <div id="product-slider">
-    <p>Dumping the products array:</p>
-    <pre>{{ collections.all.products | json }}</pre>
+ <div id="product-slider">
+    <!-- Лог для перевірки кількості продуктів -->
+    <p>Number of products: {{ collections.all.products.size }}</p>
+
+    <!-- Виведення лише назви кожного продукту -->
+    {% for product in collections.all.products %}
+      <p>{{ product.title }}</p>
+    {% endfor %}
   </div>
-</div>
