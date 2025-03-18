@@ -3,13 +3,15 @@
     <!-- Лог для перевірки кількості продуктів -->
     <p>Number of products: {{ collections.all.products.size }}</p>
 
-    <!-- Виведення назви і зображення кожного продукту -->
+    <!-- Виведення назви, зображення та ціни кожного продукту -->
     {% for product in collections.all.products %}
       <div class="product-item">
         <!-- Зображення продукту -->
         <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
         <!-- Назва продукту -->
         <p>{{ product.title }}</p>
+        <!-- Ціна продукту -->
+        <p>{{ product.price | money }}</p>
       </div>
     {% endfor %}
   </div>
