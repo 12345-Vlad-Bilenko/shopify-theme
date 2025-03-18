@@ -1,16 +1,19 @@
-  <div id="product-slider" style="position: relative; text-align: center; width: 33%; margin: 0 auto;">
-
+<div id="shopify-section-template--24432609624356__featured_rotating_products" class="shopify-section">
+  <div id="product-slider">
     <!-- Лог для перевірки кількості продуктів -->
     <p>Number of products: {{ collections.all.products.size }}</p>
 
-    <div id="slider-container" style="display: flex; overflow: hidden; justify-content: center; width: 100%; margin: 0 auto; position: relative;">
-      <!-- Виведення одного активного товару -->
-      <div id="slider-item" class="product-item" style="display: flex; transition: transform 0.5s;">
+    <!-- Контейнер для стрілок та продуктів -->
+    <div class="slider-container">
+      <!-- Стрілка "Назад" -->
+      <button id="prev-btn" class="slider-arrow" disabled>‹</button>
+
+      <!-- Контейнер для продуктів -->
+      <div class="product-items">
         {% for product in collections.all.products %}
-          <div class="product {% if forloop.index0 == 0 %}active{% endif %}" 
-               style="flex-shrink: 0; width: 200px; padding: 10px; text-align: center; transition: transform 0.5s; opacity: 1; margin: 0 10px; cursor: pointer;">
+          <div class="product-item {% if forloop.first %}active{% endif %}">
             <!-- Зображення продукту -->
-            <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}" style="max-width: 100%; height: auto; transition: transform 0.5s; border-radius: 5px;">
+            <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
             <!-- Назва продукту -->
             <p>{{ product.title }}</p>
             <!-- Ціна продукту -->
@@ -20,104 +23,178 @@
           </div>
         {% endfor %}
       </div>
+
+      <!-- Стрілка "Вперед" -->
+      <button id="next-btn" class="slider-arrow">›</button>
     </div>
 
+    <!-- Індикатори (кружочки) -->
+    <div class="slider-indicators">
+      {% for product in collections.all.products %}
+        <span class="indicator {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}"></span>
+      {% endfor %}
+    </div>
   </div>
+</div>
 
-<script>
-  const products = {{ collections.all.products | json }};
-  let currentIndex = 0;
-  const totalProducts = products.length;
-  const sliderContainer = document.getElementById('slider-item');
-  const productItems = document.querySelectorAll('.product');
-
-  // Оновлення вигляду продуктів
-  function updateUI() {
-    // Оновлюємо положення слайдера
-    sliderContainer.style.transform = `translateX(-${currentIndex * 220}px)`;
-
-    // Оновлення вигляду продуктів
-    productItems.forEach((item, index) => {
-      if (index === currentIndex) {
-        item.classList.add('active'); // Додаємо клас active для активного продукту
-        item.style.transform = 'scale(1)'; // Активний продукт - більший
-        item.style.opacity = '1'; // Чіткий
-        item.querySelector('img').style.transform = 'scale(1.2)'; // Зображення активного продукту буде більшим
-        item.style.margin = '0 0'; // Відсутність відступів для активного товару
-      } else {
-        item.classList.remove('active'); // Видаляємо клас active для неактивних товарів
-        item.style.transform = 'scale(0.8)'; // Неактивний продукт - менший
-        item.style.opacity = '0.5'; // Полупрозорий
-        item.querySelector('img').style.transform = 'scale(0.8)'; // Зображення неактивного продукту буде меншим
-        item.style.margin = '0 10px'; // Відступи для неактивних товарів
-      }
-    });
-  }
-
-  // Перехід до наступного продукту
-  function nextProduct() {
-    if (currentIndex < totalProducts - 1) {
-      currentIndex++;
-      updateUI();
-    }
-  }
-
-  // Перехід до попереднього продукту
-  function prevProduct() {
-    if (currentIndex > 0) {
-      currentIndex--;
-      updateUI();
-    }
-  }
-
-  // Перехід на продукт по кліку
-  productItems.forEach((item, index) => {
-    item.addEventListener('click', () => {
-      currentIndex = index;
-      updateUI();
-    });
-  });
-
-  // Автоперехід кожні 15 секунд
-  setInterval(nextProduct, 15000);
-
-  // Оновлення інтерфейсу при завантаженні сторінки
-  updateUI();
-</script>
-
+<!-- Стилі -->
 <style>
-  .product {
-    transition: transform 0.5s ease, opacity 0.5s ease, margin 0.5s ease;
-  }
-
-  .product.active {
-    transform: scale(1) !important;  /* Активний товар - більший */
-    opacity: 1 !important;  /* Чіткий */
-    margin: 0 0 !important;  /* Без відступів для активного товару */
-  }
-
-  .product img {
-    transition: transform 0.5s ease;
-  }
-
-  .product.active img {
-    transform: scale(1.2);  /* Зображення активного продукту буде більшим */
-  }
-
-  /* Стилі для самого слайдера */
   #product-slider {
-    width: 33%; /* Ширина слайдера 33% від ширини екрану */
-    margin: 0 auto; /* Центрування по горизонталі */
+    text-align: center;
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
   }
 
-  #slider-item {
+  .slider-container {
     display: flex;
-    overflow: hidden;
-    justify-content: center;
-    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
   }
 
-  .product {
+  .product-items {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .product-item {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+  }
+
+  .product-item.active {
+    display: block;
+  }
+
+  .product-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+
+  .product-item p {
+    margin: 10px 0;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+  }
+
+  .slider-arrow {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 10px;
+  }
+
+  .slider-arrow:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+  }
+
+  .slider-indicators {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .indicator {
+    width: 10px;
+    height: 10px;
+    background-color: #ccc;
+    border-radius: 50%;
+    margin: 0 5px;
     cursor: pointer;
   }
+
+  .indicator.active {
+    background-color: #007bff;
+  }
 </style>
+
+<!-- Скрипт для інтерактивності -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const productItems = document.querySelectorAll('.product-item');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const indicators = document.querySelectorAll('.indicator');
+    let currentIndex = 0;
+    let autoSlideInterval;
+
+    // Функція для показу поточного продукту
+    function showProduct(index) {
+      productItems.forEach((item, i) => {
+        item.classList.toggle('active', i === index);
+      });
+
+      indicators.forEach((indicator, i) => {
+        indicator.classList.toggle('active', i === index);
+      });
+
+      // Активуємо/деактивуємо стрілки
+      prevBtn.disabled = index === 0;
+      nextBtn.disabled = index === productItems.length - 1;
+    }
+
+    // Функція для переходу до наступного продукту
+    function nextProduct() {
+      currentIndex = (currentIndex + 1) % productItems.length;
+      showProduct(currentIndex);
+    }
+
+    // Функція для переходу до попереднього продукту
+    function prevProduct() {
+      currentIndex = (currentIndex - 1 + productItems.length) % productItems.length;
+      showProduct(currentIndex);
+    }
+
+    // Автоматична зміна продуктів кожні 15 секунд
+    function startAutoSlide() {
+      autoSlideInterval = setInterval(nextProduct, 15000);
+    }
+
+    // Зупинка автоматичної зміни
+    function stopAutoSlide() {
+      clearInterval(autoSlideInterval);
+    }
+
+    // Обробники подій для стрілок
+    nextBtn.addEventListener('click', () => {
+      stopAutoSlide();
+      nextProduct();
+      startAutoSlide();
+    });
+
+    prevBtn.addEventListener('click', () => {
+      stopAutoSlide();
+      prevProduct();
+      startAutoSlide();
+    });
+
+    // Обробники подій для індикаторів
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', () => {
+        stopAutoSlide();
+        currentIndex = index;
+        showProduct(currentIndex);
+        startAutoSlide();
+      });
+    });
+
+    // Запуск автоматичної зміни
+    startAutoSlide();
+  });
+</script>
