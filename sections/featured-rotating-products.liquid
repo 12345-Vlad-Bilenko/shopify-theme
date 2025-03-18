@@ -1,1 +1,13 @@
-<div id='123456' style="width: 200px; height: 100px; background-color: red;">123456</div>
+{% assign products = collections.all.products | slice: 0, 6 %}
+
+<div id="product-slider">
+  {% for product in products %}
+    <div class="product-item">
+      <a href="{{ product.url }}">
+        <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
+        <h3>{{ product.title }}</h3>
+        <p>{{ product.price | money }}</p>
+      </a>
+    </div>
+  {% endfor %}
+</div>
