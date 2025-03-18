@@ -9,9 +9,9 @@
     
     <div id="slider-container" style="display: inline-block; overflow: hidden; width: 80%; margin: 0 auto;">
       <!-- Виведення одного активного товару -->
-      <div id="slider-item" class="product-item" style="display: flex; justify-content: center; transition: transform 0.5s; opacity: 1;">
+      <div id="slider-item" class="product-item" style="display: flex; justify-content: center; transition: transform 0.5s;">
         {% for product in collections.all.products %}
-          <div class="product" style="flex-shrink: 0; width: 200px; padding: 10px; text-align: center; transition: transform 0.5s; opacity: 1;">
+          <div class="product {% if forloop.index0 == 0 %}active{% endif %}" style="flex-shrink: 0; width: 200px; padding: 10px; text-align: center; transition: transform 0.5s; opacity: 1;">
             <!-- Зображення продукту -->
             <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}" style="max-width: 100%; height: auto; transition: transform 0.5s; border-radius: 5px;">
             <!-- Назва продукту -->
@@ -63,10 +63,12 @@
     // Оновлення вигляду продуктів
     productItems.forEach((item, index) => {
       if (index === currentIndex) {
+        item.classList.add('active'); // Додаємо клас active для активного продукту
         item.style.transform = 'scale(1)'; // Активний продукт - більший
         item.style.opacity = '1'; // Чіткий
         item.querySelector('img').style.transform = 'scale(1.2)'; // Зображення активного продукту буде більшим
       } else {
+        item.classList.remove('active'); // Видаляємо клас active для неактивних товарів
         item.style.transform = 'scale(0.8)'; // Неактивний продукт - менший
         item.style.opacity = '0.5'; // Полупрозорий
         item.querySelector('img').style.transform = 'scale(0.8)'; // Зображення неактивного продукту буде меншим
@@ -100,3 +102,22 @@
   // Оновлення інтерфейсу при завантаженні сторінки
   updateUI();
 </script>
+
+<style>
+  .product {
+    transition: transform 0.5s ease, opacity 0.5s ease;
+  }
+
+  .product.active {
+    transform: scale(1) !important;  /* Активний товар - більший */
+    opacity: 1 !important;  /* Чіткий */
+  }
+
+  .product img {
+    transition: transform 0.5s ease;
+  }
+
+  .product.active img {
+    transform: scale(1.2);  /* Зображення активного продукту буде більшим */
+  }
+</style>
