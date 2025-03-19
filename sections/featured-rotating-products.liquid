@@ -1,7 +1,7 @@
 <div id="product-slider">
     <p>Number of products: {{ collections.all.products.size }}</p>
     <div class="slider-container">
-        <button id="prev-btn" class="slider-arrow" disabled>‹</button>
+        <button id="prev-btn" class="slider-arrow">‹</button>
         <div class="product-items">
             {% for product in collections.all.products %}
                 <div class="product-item {% if forloop.first %}active{% endif %}">
@@ -116,6 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const prevBtn = document.querySelector("#prev-btn");
     const nextBtn = document.querySelector("#next-btn");
     const indicators = document.querySelectorAll(".indicator");
+    const totalProducts = productItems.length;
     let currentIndex = 0;
     let autoSlideInterval;
 
@@ -128,17 +129,18 @@ document.addEventListener("DOMContentLoaded", () => {
             indicator.classList.toggle("active", i === index);
         });
 
-        prevBtn.disabled = index === 0;
-        nextBtn.disabled = index === productItems.length - 1;
+        // Завжди активуємо обидві кнопки, оскільки слайдер закільцьований
+        prevBtn.disabled = false;
+        nextBtn.disabled = false;
     };
 
     const nextProduct = () => {
-        currentIndex = (currentIndex + 1) % productItems.length;
+        currentIndex = (currentIndex + 1) % totalProducts;
         showProduct(currentIndex);
     };
 
     const prevProduct = () => {
-        currentIndex = (currentIndex - 1 + productItems.length) % productItems.length;
+        currentIndex = (currentIndex - 1 + totalProducts) % totalProducts;
         showProduct(currentIndex);
     };
 
@@ -174,6 +176,8 @@ document.addEventListener("DOMContentLoaded", () => {
     slider.addEventListener("mouseenter", stopAutoSlide);
     slider.addEventListener("mouseleave", startAutoSlide);
 
+    // Ініціалізуємо початковий стан кнопок
+    showProduct(currentIndex);
     startAutoSlide();
 });
 </script>
