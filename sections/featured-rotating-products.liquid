@@ -1,9 +1,12 @@
 <div id="product-slider">
     <p>Number of products: {{ collections.all.products.size }}</p>
     <div class="slider-container">
-        <div class="product-item inactive left"></div>
-        <div class="product-item active"></div>
-        <div class="product-item inactive right"></div>
+        <div class="product-item inactive left">
+            </div>
+        <div class="product-item active">
+            </div>
+        <div class="product-item inactive right">
+            </div>
     </div>
 </div>
 
@@ -11,45 +14,43 @@
     #product-slider {
         text-align: center;
         position: relative;
-        max-width: 900px; /* Збільшено для розміщення трьох продуктів */
+        max-width: 900px;
         margin: 0 auto;
+        overflow: hidden; /* Додано для приховування елементів за межами контейнера */
     }
 
     .slider-container {
         display: flex;
-        justify-content: center; /* Центруємо елементи */
+        justify-content: center;
         align-items: center;
         position: relative;
+        transition: transform 0.5s ease-in-out; /* Анімація для переміщення контейнера */
     }
 
     .product-item {
-        width: 300px; /* Фіксована ширина для кожного продукту */
-        height: 400px; /* Фіксована висота для кожного продукту */
+        width: 300px;
+        min-height: 300px; /* Фіксована мінімальна висота для всіх карток */
         text-align: center;
         padding: 20px;
         border: 1px solid #ddd;
         border-radius: 10px;
         background-color: #f9f9f9;
-        margin: 0 10px; /* Відстань між продуктами */
-        cursor: pointer; /* Вказуємо, що елемент клікабельний */
-        transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, width 0.3s ease-in-out; /* Додаємо плавні переходи */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden; /* Щоб контент не виходив за межі */
+        margin: 0 10px;
+        cursor: pointer;
+        transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, width 0.3s ease-in-out;
+        box-sizing: border-box; /* Враховуємо padding та border у ширині */
     }
 
     .product-item.active {
         opacity: 1;
-        width: 300px; /* Залишаємо розмір для активного елемента */
-        transform: scale(1); /* Повертаємо початковий масштаб */
+        width: 300px;
+        transform: scale(1);
     }
 
     .product-item.inactive {
-        opacity: 0.5; /* Напівпрозорість для неактивних елементів */
-        width: 200px; /* Менший розмір для неактивних елементів */
-        transform: scale(0.8); /* Зменшуємо масштаб неактивних елементів */
+        opacity: 0.5;
+        width: 200px;
+        transform: scale(0.8);
     }
 
     .product-item.left {
@@ -62,14 +63,14 @@
 
     .product-item img {
         max-width: 100%;
-        max-height: 200px; /* Фіксована висота для зображень */
+        max-height: 150px; /* Обмежуємо висоту зображення */
+        height: auto;
         border-radius: 10px;
-        object-fit: cover; /* Щоб зображення заповнювало контейнер */
+        object-fit: contain; /* Гарантуємо, що зображення повністю вміститься */
     }
 
     .product-item p {
         margin: 10px 0;
-        font-size: 16px;
     }
 
     .btn {
@@ -79,36 +80,15 @@
         color: #fff;
         text-decoration: none;
         border-radius: 5px;
-        font-size: 14px;
-    }
-
-    @keyframes slideIn {
-        from {
-            opacity: 0;
-            transform: translateX(-50px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    @keyframes slideOut {
-        from {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        to {
-            opacity: 0;
-            transform: translateX(50px);
-        }
     }
 </style>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        const productSlider = document.getElementById('product-slider');
+        const sliderContainer = productSlider.querySelector('.slider-container');
         const productItems = document.querySelectorAll('.product-item');
-        const productsData = {{ collections.all.products | json }}; // Передаємо дані продуктів у JavaScript
+        const productsData = {{ collections.all.products | json }};
         let currentIndex = 0;
         let autoSlideInterval;
 
@@ -116,7 +96,7 @@
             // Очищаємо вміст елементів
             productItems.forEach(item => {
                 item.innerHTML = '';
-                item.className = 'product-item inactive'; // Скидаємо класи
+                item.className = 'product-item inactive';
             });
 
             // Визначаємо індекси продуктів для відображення
@@ -130,12 +110,14 @@
                 const leftItem = productItems[0];
                 leftItem.classList.add('left');
                 leftItem.innerHTML = `
-                    <img src="${leftProduct.featured_image}" alt="${leftProduct.title}">
+                    ${leftProduct.featured_image ? `<img src="${leftProduct.featured_image}" alt="${leftProduct.title}">` : '<div class="placeholder-image">No Image</div>'}
                     <p>${leftProduct.title}</p>
                 `;
                 leftItem.addEventListener('click', () => {
+                    stopAutoSlide();
                     currentIndex = leftIndex;
                     updateSlider();
+                    startAutoSlide();
                 });
             }
 
@@ -146,7 +128,7 @@
                 activeItem.classList.remove('inactive');
                 activeItem.classList.add('active');
                 activeItem.innerHTML = `
-                    <img src="${activeProduct.featured_image}" alt="${activeProduct.title}">
+                    ${activeProduct.featured_image ? `<img src="${activeProduct.featured_image}" alt="${activeProduct.title}">` : '<div class="placeholder-image">No Image</div>'}
                     <p>${activeProduct.title}</p>
                     <p>${activeProduct.price}</p>
                     <a href="${activeProduct.url}" class="btn btn-primary">View Product</a>
@@ -159,30 +141,31 @@
                 const rightItem = productItems[2];
                 rightItem.classList.add('right');
                 rightItem.innerHTML = `
-                    <img src="${rightProduct.featured_image}" alt="${rightProduct.title}">
+                    ${rightProduct.featured_image ? `<img src="${rightProduct.featured_image}" alt="${rightProduct.title}">` : '<div class="placeholder-image">No Image</div>'}
                     <p>${rightProduct.title}</p>
                 `;
                 rightItem.addEventListener('click', () => {
+                    stopAutoSlide();
                     currentIndex = rightIndex;
                     updateSlider();
+                    startAutoSlide();
                 });
             }
 
-            // Додаємо анімацію
-            productItems.forEach(item => {
-                item.style.animation = 'slideIn 0.5s ease-in-out';
-            });
+            // Анімація переміщення контейнера
+            const translateXValue = -currentIndex * 320; // 300px ширина + 20px margin
+            sliderContainer.style.transform = `translateX(${translateXValue}px)`;
         }
 
-        // Функція для автоматичного перемикання
+        function nextProduct() {
+            currentIndex = (currentIndex + 1) % productsData.length;
+            updateSlider();
+        }
+
         function startAutoSlide() {
-            autoSlideInterval = setInterval(() => {
-                currentIndex = (currentIndex + 1) % productsData.length;
-                updateSlider();
-            }, 5000); // Перемикання кожні 5 секунд
+            autoSlideInterval = setInterval(nextProduct, 5000);
         }
 
-        // Зупинка автоматичного перемикання
         function stopAutoSlide() {
             clearInterval(autoSlideInterval);
         }
@@ -191,8 +174,20 @@
         updateSlider();
         startAutoSlide();
 
-        // Зупинка автоматичного перемикання при наведенні миші
-        document.getElementById('product-slider').addEventListener('mouseenter', stopAutoSlide);
-        document.getElementById('product-slider').addEventListener('mouseleave', startAutoSlide);
+        // Додаємо стилі для плейсхолдера зображення
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .placeholder-image {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 150px;
+                background-color: #eee;
+                border-radius: 10px;
+                font-size: 14px;
+                color: #777;
+            }
+        `;
+        document.head.appendChild(style);
     });
 </script>
