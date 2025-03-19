@@ -1,78 +1,121 @@
 <div id="product-slider">
+    <p>Number of products: {{ collections.all.products.size }}</p>
     <div class="slider-container">
-        {% for product in collections.all.products %}
-        <div class="product-item" data-index="{{ forloop.index0 }}">
-            <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
-            <p>{{ product.title }}</p>
-            <p>{{ product.price | money }}</p>
-            <a href="{{ product.url }}" class="btn btn-primary">Купити</a>
+        <div class="product-items">
+            {% for product in collections.all.products %}
+                <div class="product-item {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}">
+                    <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
+                    <p>{{ product.title }}</p>
+                    <p>{{ product.price | money }}</p>
+                    <a href="{{ product.url }}" class="btn btn-primary">View Product</a>
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 </div>
 
 <style>
-  #product-slider {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    max-width: 900px;
-    margin: auto;
-  }
-  .slider-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .product-item {
-    flex: 1;
-    text-align: center;
-    padding: 15px;
-    border-radius: 10px;
-    transition: transform 0.3s, opacity 0.3s;
-    cursor: pointer;
-    background: #f9f9f9;
-    border: 1px solid #ddd;
-  }
-  .product-item img {
-    max-width: 100%;
-    border-radius: 10px;
-  }
-  .product-item p { margin: 5px 0; }
-  .btn { display: none; padding: 8px 15px; background: #007bff; color: #fff; text-decoration: none; border-radius: 5px; }
-  
-  .product-item.inactive {
-    transform: scale(0.8);
-    opacity: 0.5;
-  }
-  .product-item.active {
-    flex: 2;
-    transform: scale(1);
-    opacity: 1;
-  }
-  .product-item.active .btn { display: inline-block; }
+    #product-slider {
+        text-align: center;
+        position: relative;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .slider-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .product-items {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        position: relative;
+    }
+
+    .product-item {
+        text-align: center;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        flex: 0 0 30%;
+        opacity: 0.5;
+        transform: scale(0.9);
+        cursor: pointer;
+    }
+
+    .product-item.active {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .product-item img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+    }
+
+    .product-item p {
+        margin: 10px 0;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+    }
 </style>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-      const items = document.querySelectorAll(".product-item");
-      let currentIndex = 0;
-      
-      function updateView() {
-          items.forEach((item, i) => {
-              item.classList.toggle("active", i === currentIndex);
-              item.classList.toggle("inactive", i !== currentIndex);
-          });
-      }
-      
-      items.forEach((item, index) => {
-          item.addEventListener("click", () => {
-              currentIndex = index;
-              updateView();
-          });
-      });
-      
-      updateView();
-  });
+    document.addEventListener("DOMContentLoaded", function() {
+        const productItems = document.querySelectorAll('.product-item');
+        let currentIndex = 0;
+
+        function showProduct(index) {
+            productItems.forEach((item, i) => {
+                const isActive = i === index;
+                item.classList.toggle('active', isActive);
+                item.style.opacity = isActive ? 1 : 0.5;
+                item.style.transform = isActive ? 'scale(1)' : 'scale(0.9)';
+            });
+
+            // Reorder items to create a circular effect
+            productItems.forEach((item, i) => {
+                const newIndex = (i - index + productItems.length) % productItems.length;
+                item.style.order = newIndex;
+            });
+        }
+
+        function nextProduct() {
+            currentIndex = (currentIndex + 1) % productItems.length;
+            showProduct(currentIndex);
+        }
+
+        function prevProduct() {
+            currentIndex = (currentIndex - 1 + productItems.length) % productItems.length;
+            showProduct(currentIndex);
+        }
+
+        productItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                if (!item.classList.contains('active')) {
+                    currentIndex = index;
+                    showProduct(currentIndex);
+                }
+            });
+        });
+
+        // Initial display
+        showProduct(currentIndex);
+    });
 </script>
