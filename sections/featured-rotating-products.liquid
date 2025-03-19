@@ -26,6 +26,7 @@
     text-align: center;
     max-width: 800px;
     margin: 0 auto;
+    position: relative; /* Додано для позиціонування сусідніх елементів */
 }
 
 .slider-container {
@@ -40,6 +41,7 @@
     overflow: hidden;
     display: flex;
     transition: transform 0.3s ease-in-out;
+    position: relative; /* Додано для позиціонування сусідніх елементів */
 }
 
 .product-item {
@@ -107,18 +109,61 @@
 .indicator.active {
     background-color: #007bff;
 }
+
+.side-product {
+    position: absolute;
+    top: 0;
+    width: 50%; /* Займає половину ширини */
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none; /* Щоб кліки проходили на основний слайдер */
+}
+
+.side-product.left {
+    left: 0;
+}
+
+.side-product.right {
+    right: 0;
+}
+
+.side-product .product-item {
+    opacity: 0.5;
+    transform: scale(0.8);
+    pointer-events: auto; /* Дозволяємо клікати на сусідні продукти */
+}
+
+.side-product.left .product-item {
+    transform: translateX(-50%);
+}
+
+.side-product.right .product-item {
+    transform: translateX(50%);
+}
 </style>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const slider = document.querySelector("#product-slider");
     const productItems = document.querySelectorAll(".product-item");
+    const sliderContainer = document.querySelector(".slider-container");
     const prevBtn = document.querySelector("#prev-btn");
     const nextBtn = document.querySelector("#next-btn");
     const indicators = document.querySelectorAll(".indicator");
     const totalProducts = productItems.length;
     let currentIndex = 0;
     let autoSlideInterval;
+
+    // Створення елементів для сусідніх продуктів
+    const leftSideProduct = document.createElement('div');
+    leftSideProduct.classList.add('side-product', 'left');
+    slider.appendChild(leftSideProduct);
+
+    const rightSideProduct = document.createElement('div');
+    rightSideProduct.classList.add('side-product', 'right');
+    slider.appendChild(rightSideProduct);
 
     const showProduct = (index) => {
         productItems.forEach((item, i) => {
@@ -132,6 +177,39 @@ document.addEventListener("DOMContentLoaded", () => {
         // Завжди активуємо обидві кнопки, оскільки слайдер закільцьований
         prevBtn.disabled = false;
         nextBtn.disabled = false;
+
+        // Оновлення сусідніх продуктів
+        const prevIndex = (index - 1 + totalProducts) % totalProducts;
+        const nextIndex = (index + 1) % totalProducts;
+
+        leftSideProduct.innerHTML = `
+            <div class="product-item">
+                <img src="${productItems[prevIndex].querySelector('img').src}" alt="${productItems[prevIndex].querySelector('img').alt}">
+                <p>${productItems[prevIndex].querySelector('p').textContent}</p>
+            </div>
+        `;
+
+        rightSideProduct.innerHTML = `
+            <div class="product-item">
+                <img src="${productItems[nextIndex].querySelector('img').src}" alt="${productItems[nextIndex].querySelector('img').alt}">
+                <p>${productItems[nextIndex].querySelector('p').textContent}</p>
+            </div>
+        `;
+
+        // Додаємо обробники кліків на сусідні продукти
+        leftSideProduct.onclick = () => {
+            stopAutoSlide();
+            currentIndex = prevIndex;
+            showProduct(currentIndex);
+            startAutoSlide();
+        };
+
+        rightSideProduct.onclick = () => {
+            stopAutoSlide();
+            currentIndex = nextIndex;
+            showProduct(currentIndex);
+            startAutoSlide();
+        };
     };
 
     const nextProduct = () => {
@@ -176,7 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
     slider.addEventListener("mouseenter", stopAutoSlide);
     slider.addEventListener("mouseleave", startAutoSlide);
 
-    // Ініціалізуємо початковий стан кнопок
+    // Ініціалізуємо початковий стан
     showProduct(currentIndex);
     startAutoSlide();
 });
