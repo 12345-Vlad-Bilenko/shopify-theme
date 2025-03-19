@@ -39,7 +39,7 @@
     flex: 1;
     overflow: hidden;
     display: flex;
-    transition: transform 0.5s ease-in-out; /* Збільшено час переходу для плавності */
+    transition: transform 0.3s ease-in-out;
 }
 
 .product-item {
@@ -113,7 +113,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const slider = document.querySelector("#product-slider");
     const productItems = document.querySelectorAll(".product-item");
-    const productItemsContainer = document.querySelector(".product-items");
     const prevBtn = document.querySelector("#prev-btn");
     const nextBtn = document.querySelector("#next-btn");
     const indicators = document.querySelectorAll(".indicator");
@@ -133,10 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // Завжди активуємо обидві кнопки, оскільки слайдер закільцьований
         prevBtn.disabled = false;
         nextBtn.disabled = false;
-
-        // Анімація переміщення
-        const translateValue = -index * 100 + '%';
-        productItemsContainer.style.transform = `translateX(${translateValue})`;
     };
 
     const nextProduct = () => {
