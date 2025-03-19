@@ -4,8 +4,22 @@
     
     {% if product.selected_or_first_available_variant.option1 %}
       <p style="margin: 0; font-size: 16px; color: #fff;">Обраний колір: {{ product.selected_or_first_available_variant.option1 }}</p>
+      
+      {% assign selected_color = product.selected_or_first_available_variant.option1 %}
+      
+      <p style="margin-top: 20px; font-size: 16px; color: #fff;">Інші продукти з таким кольором:</p>
+      
+      <ul style="list-style-type: none; padding: 0;">
+        {% for other_product in collections.all.products %}
+          {% if other_product.selected_or_first_available_variant.option1 == selected_color and other_product.id != product.id %}
+            <li>
+              <a href="{{ other_product.url }}" style="color: white; text-decoration: none;">
+                {{ other_product.title }}
+              </a>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
     {% endif %}
-
-
   </div>
 </div>
