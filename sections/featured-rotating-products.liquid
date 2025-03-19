@@ -1,12 +1,16 @@
 <div id="product-slider">
     <p>Number of products: {{ collections.all.products.size }}</p>
     <div class="slider-container">
-        <div class="product-item inactive left">
-            </div>
-        <div class="product-item active">
-            </div>
-        <div class="product-item inactive right">
-            </div>
+        <div class="product-items">
+            {% for product in collections.all.products %}
+                <div class="product-item {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}">
+                    <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
+                    <p>{{ product.title }}</p>
+                    <p>{{ product.price | money }}</p>
+                    <a href="{{ product.url }}" class="btn btn-primary">View Product</a>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 
@@ -14,59 +18,48 @@
     #product-slider {
         text-align: center;
         position: relative;
-        max-width: 900px;
+        max-width: 1200px;
         margin: 0 auto;
-        overflow: hidden; /* Додано для приховування елементів за межами контейнера */
+        padding: 20px;
     }
 
     .slider-container {
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
         position: relative;
-        transition: transform 0.5s ease-in-out; /* Анімація для переміщення контейнера */
+    }
+
+    .product-items {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        position: relative;
     }
 
     .product-item {
-        width: 300px;
-        min-height: 300px; /* Фіксована мінімальна висота для всіх карток */
         text-align: center;
         padding: 20px;
         border: 1px solid #ddd;
         border-radius: 10px;
         background-color: #f9f9f9;
-        margin: 0 10px;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        flex: 0 0 30%;
+        opacity: 0.5;
+        transform: scale(0.9);
         cursor: pointer;
-        transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, width 0.3s ease-in-out;
-        box-sizing: border-box; /* Враховуємо padding та border у ширині */
     }
 
     .product-item.active {
         opacity: 1;
-        width: 300px;
         transform: scale(1);
-    }
-
-    .product-item.inactive {
-        opacity: 0.5;
-        width: 200px;
-        transform: scale(0.8);
-    }
-
-    .product-item.left {
-        /* Додаткові стилі для лівого неактивного елемента */
-    }
-
-    .product-item.right {
-        /* Додаткові стилі для правого неактивного елемента */
     }
 
     .product-item img {
         max-width: 100%;
-        max-height: 150px; /* Обмежуємо висоту зображення */
         height: auto;
         border-radius: 10px;
-        object-fit: contain; /* Гарантуємо, що зображення повністю вміститься */
     }
 
     .product-item p {
@@ -85,109 +78,44 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const productSlider = document.getElementById('product-slider');
-        const sliderContainer = productSlider.querySelector('.slider-container');
         const productItems = document.querySelectorAll('.product-item');
-        const productsData = {{ collections.all.products | json }};
         let currentIndex = 0;
-        let autoSlideInterval;
 
-        function updateSlider() {
-            // Очищаємо вміст елементів
-            productItems.forEach(item => {
-                item.innerHTML = '';
-                item.className = 'product-item inactive';
+        function showProduct(index) {
+            productItems.forEach((item, i) => {
+                const isActive = i === index;
+                item.classList.toggle('active', isActive);
+                item.style.opacity = isActive ? 1 : 0.5;
+                item.style.transform = isActive ? 'scale(1)' : 'scale(0.9)';
             });
 
-            // Визначаємо індекси продуктів для відображення
-            let leftIndex = (currentIndex - 1 + productsData.length) % productsData.length;
-            let activeIndex = currentIndex;
-            let rightIndex = (currentIndex + 1) % productsData.length;
-
-            // Заповнюємо лівий елемент
-            let leftProduct = productsData[leftIndex];
-            if (leftProduct) {
-                const leftItem = productItems[0];
-                leftItem.classList.add('left');
-                leftItem.innerHTML = `
-                    ${leftProduct.featured_image ? `<img src="${leftProduct.featured_image}" alt="${leftProduct.title}">` : '<div class="placeholder-image">No Image</div>'}
-                    <p>${leftProduct.title}</p>
-                `;
-                leftItem.addEventListener('click', () => {
-                    stopAutoSlide();
-                    currentIndex = leftIndex;
-                    updateSlider();
-                    startAutoSlide();
-                });
-            }
-
-            // Заповнюємо активний елемент
-            let activeProduct = productsData[activeIndex];
-            if (activeProduct) {
-                const activeItem = productItems[1];
-                activeItem.classList.remove('inactive');
-                activeItem.classList.add('active');
-                activeItem.innerHTML = `
-                    ${activeProduct.featured_image ? `<img src="${activeProduct.featured_image}" alt="${activeProduct.title}">` : '<div class="placeholder-image">No Image</div>'}
-                    <p>${activeProduct.title}</p>
-                    <p>${activeProduct.price}</p>
-                    <a href="${activeProduct.url}" class="btn btn-primary">View Product</a>
-                `;
-            }
-
-            // Заповнюємо правий елемент
-            let rightProduct = productsData[rightIndex];
-            if (rightProduct) {
-                const rightItem = productItems[2];
-                rightItem.classList.add('right');
-                rightItem.innerHTML = `
-                    ${rightProduct.featured_image ? `<img src="${rightProduct.featured_image}" alt="${rightProduct.title}">` : '<div class="placeholder-image">No Image</div>'}
-                    <p>${rightProduct.title}</p>
-                `;
-                rightItem.addEventListener('click', () => {
-                    stopAutoSlide();
-                    currentIndex = rightIndex;
-                    updateSlider();
-                    startAutoSlide();
-                });
-            }
-
-            // Анімація переміщення контейнера
-            const translateXValue = -currentIndex * 320; // 300px ширина + 20px margin
-            sliderContainer.style.transform = `translateX(${translateXValue}px)`;
+            // Reorder items to create a circular effect
+            productItems.forEach((item, i) => {
+                const newIndex = (i - index + productItems.length) % productItems.length;
+                item.style.order = newIndex;
+            });
         }
 
         function nextProduct() {
-            currentIndex = (currentIndex + 1) % productsData.length;
-            updateSlider();
+            currentIndex = (currentIndex + 1) % productItems.length;
+            showProduct(currentIndex);
         }
 
-        function startAutoSlide() {
-            autoSlideInterval = setInterval(nextProduct, 5000);
+        function prevProduct() {
+            currentIndex = (currentIndex - 1 + productItems.length) % productItems.length;
+            showProduct(currentIndex);
         }
 
-        function stopAutoSlide() {
-            clearInterval(autoSlideInterval);
-        }
+        productItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                if (!item.classList.contains('active')) {
+                    currentIndex = index;
+                    showProduct(currentIndex);
+                }
+            });
+        });
 
-        // Ініціалізація слайдера
-        updateSlider();
-        startAutoSlide();
-
-        // Додаємо стилі для плейсхолдера зображення
-        const style = document.createElement('style');
-        style.innerHTML = `
-            .placeholder-image {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 150px;
-                background-color: #eee;
-                border-radius: 10px;
-                font-size: 14px;
-                color: #777;
-            }
-        `;
-        document.head.appendChild(style);
+        // Initial display
+        showProduct(currentIndex);
     });
 </script>
