@@ -6,15 +6,6 @@
       <p style="margin: 0; font-size: 16px; color: #fff;">Обраний колір: {{ product.selected_or_first_available_variant.option1 }}</p>
     {% endif %}
 
-    {% if product.variants.size > 1 %}
-      <p style="margin: 10px 0; font-size: 16px; color: #fff;">Доступні кольори:</p>
-      <ul style="list-style-type: none; padding: 0;">
-        {% for variant in product.variants %}
-          {% if variant.option1 %}
-            <li style="font-size: 16px; color: #fff;">{{ variant.option1 }}</li>
-          {% endif %}
-        {% endfor %}
-      </ul>
-    {% endif %}
+
   </div>
 </div>
