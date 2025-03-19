@@ -1,7 +1,7 @@
 <div id="product-slider">
     <p>Number of products: {{ collections.all.products.size }}</p>
     <div class="slider-container">
-        <button id="prev-btn" class="slider-arrow" disabled>‹</button>
+        <button id="prev-btn" class="slider-arrow">‹</button>
         <div class="product-items">
             {% for product in collections.all.products %}
                 <div class="product-item {% if forloop.first %}active{% endif %}">
@@ -26,15 +26,13 @@
     text-align: center;
     max-width: 800px;
     margin: 0 auto;
-    position: relative; /* Додано для позиціонування */
 }
 
 .slider-container {
     display: flex;
     align-items: center;
-    justify-content: center; /* Замість space-between */
+    justify-content: space-between;
     gap: 10px;
-    position: relative;
 }
 
 .product-items {
@@ -42,7 +40,6 @@
     overflow: hidden;
     display: flex;
     transition: transform 0.3s ease-in-out;
-    position: relative;
 }
 
 .product-item {
@@ -110,22 +107,6 @@
 .indicator.active {
     background-color: #007bff;
 }
-
-/* Зробимо частину продуктів видимою зліва та справа */
-.product-item.previous,
-.product-item.next {
-    opacity: 0.5;
-    transform: scale(0.8);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.product-item.previous {
-    transform: translateX(-20%) scale(0.8); /* Переміщаємо ліворуч */
-}
-
-.product-item.next {
-    transform: translateX(20%) scale(0.8); /* Переміщаємо праворуч */
-}
 </style>
 
 <script>
@@ -135,33 +116,31 @@ document.addEventListener("DOMContentLoaded", () => {
     const prevBtn = document.querySelector("#prev-btn");
     const nextBtn = document.querySelector("#next-btn");
     const indicators = document.querySelectorAll(".indicator");
+    const totalProducts = productItems.length;
     let currentIndex = 0;
     let autoSlideInterval;
 
     const showProduct = (index) => {
         productItems.forEach((item, i) => {
-            item.classList.remove("active", "previous", "next"); // Видаляємо всі класи
-            if (i === index) {
-                item.classList.add("active");
-            } else if (i === (index - 1 + productItems.length) % productItems.length) {
-                item.classList.add("previous"); // Клас для попереднього продукту
-            } else if (i === (index + 1) % productItems.length) {
-                item.classList.add("next"); // Клас для наступного продукту
-            }
+            item.classList.toggle("active", i === index);
         });
 
         indicators.forEach((indicator, i) => {
             indicator.classList.toggle("active", i === index);
         });
+
+        // Завжди активуємо обидві кнопки, оскільки слайдер закільцьований
+        prevBtn.disabled = false;
+        nextBtn.disabled = false;
     };
 
     const nextProduct = () => {
-        currentIndex = (currentIndex + 1) % productItems.length;
+        currentIndex = (currentIndex + 1) % totalProducts;
         showProduct(currentIndex);
     };
 
     const prevProduct = () => {
-        currentIndex = (currentIndex - 1 + productItems.length) % productItems.length;
+        currentIndex = (currentIndex - 1 + totalProducts) % totalProducts;
         showProduct(currentIndex);
     };
 
@@ -197,6 +176,8 @@ document.addEventListener("DOMContentLoaded", () => {
     slider.addEventListener("mouseenter", stopAutoSlide);
     slider.addEventListener("mouseleave", startAutoSlide);
 
+    // Ініціалізуємо початковий стан кнопок
+    showProduct(currentIndex);
     startAutoSlide();
 });
 </script>
