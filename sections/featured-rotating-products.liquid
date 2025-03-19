@@ -1,171 +1,181 @@
-<div id="product-slider">
+треба трохи змінити зовнішній вигляд.
+"<div id="product-slider">
     <p>Number of products: {{ collections.all.products.size }}</p>
     <div class="slider-container">
-        <div class="product-item inactive left"></div>
-        <div class="product-item active"></div>
-        <div class="product-item inactive right"></div>
+      <button id="prev-btn" class="slider-arrow" disabled>‹</button>
+      <div class="product-items">
+        {% for product in collections.all.products %}
+          <div class="product-item {% if forloop.first %}active{% endif %}">
+            <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
+            <p>{{ product.title }}</p>
+            <p>{{ product.price | money }}</p>
+            <a href="{{ product.url }}" class="btn btn-primary">View Product</a>
+          </div>
+        {% endfor %}
+      </div>
+      <button id="next-btn" class="slider-arrow">›</button>
+    </div>
+    <div class="slider-indicators">
+      {% for product in collections.all.products %}
+        <span class="indicator {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}"></span>
+      {% endfor %}
     </div>
 </div>
 
 <style>
-    #product-slider {
-        text-align: center;
-        position: relative;
-        max-width: 900px; /* Збільшено для розміщення трьох продуктів */
-        margin: 0 auto;
-    }
+  #product-slider {
+    text-align: center;
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+  }
 
-    .slider-container {
-        display: flex;
-        justify-content: center; /* Центруємо елементи */
-        align-items: center;
-        position: relative;
-    }
+  .slider-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+  }
 
-    .product-item {
-        width: 300px; /* Фіксована ширина для кожного продукту */
-        height: 400px; /* Фіксована висота для кожного продукту */
-        text-align: center;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        background-color: #f9f9f9;
-        margin: 0 10px; /* Відстань між продуктами */
-        cursor: pointer; /* Вказуємо, що елемент клікабельний */
-        transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, width 0.3s ease-in-out; /* Додаємо плавні переходи */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden; /* Щоб контент не виходив за межі */
-    }
+  .product-items {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
 
-    .product-item.active {
-        opacity: 1;
-        width: 300px; /* Залишаємо розмір для активного елемента */
-        transform: scale(1); /* Повертаємо початковий масштаб */
-    }
+  .product-item {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+  }
 
-    .product-item.inactive {
-        opacity: 0.5; /* Напівпрозорість для неактивних елементів */
-        width: 200px; /* Менший розмір для неактивних елементів */
-        transform: scale(0.8); /* Зменшуємо масштаб неактивних елементів */
-    }
+  .product-item.active {
+    display: block;
+  }
 
-    .product-item.left {
-        /* Додаткові стилі для лівого неактивного елемента */
-    }
+  .product-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
 
-    .product-item.right {
-        /* Додаткові стилі для правого неактивного елемента */
-    }
+  .product-item p {
+    margin: 10px 0;
+  }
 
-    .product-item img {
-        max-width: 100%;
-        max-height: 200px; /* Фіксована висота для зображень */
-        border-radius: 10px;
-        object-fit: cover; /* Щоб зображення заповнювало контейнер */
-    }
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+  }
 
-    .product-item p {
-        margin: 10px 0;
-        font-size: 16px;
-    }
+  .slider-arrow {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 10px;
+  }
 
-    .btn {
-        display: inline-block;
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: #fff;
-        text-decoration: none;
-        border-radius: 5px;
-        font-size: 14px;
-    }
+  .slider-arrow:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+  }
+
+  .slider-indicators {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .indicator {
+    width: 10px;
+    height: 10px;
+    background-color: #ccc;
+    border-radius: 50%;
+    margin: 0 5px;
+    cursor: pointer;
+  }
+
+  .indicator.active {
+    background-color: #007bff;
+  }
 </style>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const productItems = document.querySelectorAll('.product-item');
-        const productsData = {{ collections.all.products | json }}; // Передаємо дані продуктів у JavaScript
-        let currentIndex = 0;
-        let autoSlideInterval;
+  document.addEventListener("DOMContentLoaded", function() {
+    const productItems = document.querySelectorAll('.product-item');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const indicators = document.querySelectorAll('.indicator');
+    let currentIndex = 0;
+    let autoSlideInterval;
 
-        function updateSlider() {
-            // Очищаємо вміст елементів
-            productItems.forEach(item => {
-                item.innerHTML = '';
-                item.className = 'product-item inactive'; // Скидаємо класи
-            });
+    function showProduct(index) {
+      productItems.forEach((item, i) => {
+        item.classList.toggle('active', i === index);
+      });
 
-            // Визначаємо індекси продуктів для відображення
-            let leftIndex = (currentIndex - 1 + productsData.length) % productsData.length;
-            let activeIndex = currentIndex;
-            let rightIndex = (currentIndex + 1) % productsData.length;
+      indicators.forEach((indicator, i) => {
+        indicator.classList.toggle('active', i === index);
+      });
 
-            // Заповнюємо лівий елемент
-            let leftProduct = productsData[leftIndex];
-            if (leftProduct) {
-                const leftItem = productItems[0];
-                leftItem.classList.add('left');
-                leftItem.innerHTML = `
-                    <img src="${leftProduct.featured_image}" alt="${leftProduct.title}">
-                    <p>${leftProduct.title}</p>
-                `;
-                leftItem.addEventListener('click', () => {
-                    currentIndex = leftIndex;
-                    updateSlider();
-                });
-            }
+      prevBtn.disabled = index === 0;
+      nextBtn.disabled = index === productItems.length - 1;
+    }
 
-            // Заповнюємо активний елемент
-            let activeProduct = productsData[activeIndex];
-            if (activeProduct) {
-                const activeItem = productItems[1];
-                activeItem.classList.remove('inactive');
-                activeItem.classList.add('active');
-                activeItem.innerHTML = `
-                    <img src="${activeProduct.featured_image}" alt="${activeProduct.title}">
-                    <p>${activeProduct.title}</p>
-                    <p>${activeProduct.price}</p>
-                    <a href="${activeProduct.url}" class="btn btn-primary">View Product</a>
-                `;
-            }
+    function nextProduct() {
+      currentIndex = (currentIndex + 1) % productItems.length;
+      showProduct(currentIndex);
+    }
 
-            // Заповнюємо правий елемент
-            let rightProduct = productsData[rightIndex];
-            if (rightProduct) {
-                const rightItem = productItems[2];
-                rightItem.classList.add('right');
-                rightItem.innerHTML = `
-                    <img src="${rightProduct.featured_image}" alt="${rightProduct.title}">
-                    <p>${rightProduct.title}</p>
-                `;
-                rightItem.addEventListener('click', () => {
-                    currentIndex = rightIndex;
-                    updateSlider();
-                });
-            }
-        }
+    function prevProduct() {
+      currentIndex = (currentIndex - 1 + productItems.length) % productItems.length;
+      showProduct(currentIndex);
+    }
 
-        // Функція для автоматичного перемикання
-        function startAutoSlide() {
-            autoSlideInterval = setInterval(() => {
-                currentIndex = (currentIndex + 1) % productsData.length;
-                updateSlider();
-            }, 5000); // Перемикання кожні 5 секунд
-        }
+    function startAutoSlide() {
+      autoSlideInterval = setInterval(nextProduct, 5000);
+    }
 
-        // Зупинка автоматичного перемикання
-        function stopAutoSlide() {
-            clearInterval(autoSlideInterval);
-        }
+    function stopAutoSlide() {
+      clearInterval(autoSlideInterval);
+    }
 
-        // Ініціалізація слайдера
-        updateSlider();
-        startAutoSlide();
-
-        // Зупинка автоматичного перемикання при наведенні миші
-        document.getElementById('product-slider').addEventListener('mouseenter', stopAutoSlide);
-        document.getElementById('product-slider').addEventListener('mouseleave', startAutoSlide);
+    nextBtn.addEventListener('click', () => {
+      stopAutoSlide();
+      nextProduct();
+      startAutoSlide();
     });
+
+    prevBtn.addEventListener('click', () => {
+      stopAutoSlide();
+      prevProduct();
+      startAutoSlide();
+    });
+
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', () => {
+        stopAutoSlide();
+        currentIndex = index;
+        showProduct(currentIndex);
+        startAutoSlide();
+      });
+    });
+
+    startAutoSlide();
+  });
 </script>
+"
+
+
+
+треба так: 
+
+всього видно на сторінці 3 продукти, вони посередені, кожен в окремій "карточці", обраний активний продукт в "карточці" з усією інформацією та кнопкою покупки з права та з ліва продукти неактивні продукти меншого розміру в таких самих прямокутниках полупрозорі. стрілочки тоді не треба а перемикання на наступний та попередній хай буде коли натискаєш на неактивні продукти. цей віджет як закольцовано 
