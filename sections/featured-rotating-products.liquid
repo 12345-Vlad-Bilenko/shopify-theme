@@ -1,34 +1,20 @@
 <div id="shopify-section-template--24432609624356__featured_rotating_products" class="shopify-section">
   <div id="product-slider">
-    <!-- Лог для перевірки кількості продуктів -->
     <p>Number of products: {{ collections.all.products.size }}</p>
-
-    <!-- Контейнер для стрілок та продуктів -->
     <div class="slider-container">
-      <!-- Стрілка "Назад" -->
       <button id="prev-btn" class="slider-arrow" disabled>‹</button>
-
-      <!-- Контейнер для продуктів -->
       <div class="product-items">
         {% for product in collections.all.products %}
           <div class="product-item {% if forloop.first %}active{% endif %}">
-            <!-- Зображення продукту -->
             <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
-            <!-- Назва продукту -->
             <p>{{ product.title }}</p>
-            <!-- Ціна продукту -->
             <p>{{ product.price | money }}</p>
-            <!-- Кнопка для відкриття товару -->
             <a href="{{ product.url }}" class="btn btn-primary">View Product</a>
           </div>
         {% endfor %}
       </div>
-
-      <!-- Стрілка "Вперед" -->
       <button id="next-btn" class="slider-arrow">›</button>
     </div>
-
-    <!-- Індикатори (кружочки) -->
     <div class="slider-indicators">
       {% for product in collections.all.products %}
         <span class="indicator {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}"></span>
@@ -37,7 +23,6 @@
   </div>
 </div>
 
-<!-- Стилі -->
 <style>
   #product-slider {
     text-align: center;
@@ -124,7 +109,6 @@
   }
 </style>
 
-<!-- Скрипт для інтерактивності -->
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     const productItems = document.querySelectorAll('.product-item');
@@ -134,7 +118,6 @@
     let currentIndex = 0;
     let autoSlideInterval;
 
-    // Функція для показу поточного продукту
     function showProduct(index) {
       productItems.forEach((item, i) => {
         item.classList.toggle('active', i === index);
@@ -144,34 +127,28 @@
         indicator.classList.toggle('active', i === index);
       });
 
-      // Активуємо/деактивуємо стрілки
       prevBtn.disabled = index === 0;
       nextBtn.disabled = index === productItems.length - 1;
     }
 
-    // Функція для переходу до наступного продукту
     function nextProduct() {
       currentIndex = (currentIndex + 1) % productItems.length;
       showProduct(currentIndex);
     }
 
-    // Функція для переходу до попереднього продукту
     function prevProduct() {
       currentIndex = (currentIndex - 1 + productItems.length) % productItems.length;
       showProduct(currentIndex);
     }
 
-    // Автоматична зміна продуктів кожні 5 секунд
     function startAutoSlide() {
-      autoSlideInterval = setInterval(nextProduct, 5000); // Змінено на 5000 мс (5 секунд)
+      autoSlideInterval = setInterval(nextProduct, 5000);
     }
 
-    // Зупинка автоматичної зміни
     function stopAutoSlide() {
       clearInterval(autoSlideInterval);
     }
 
-    // Обробники подій для стрілок
     nextBtn.addEventListener('click', () => {
       stopAutoSlide();
       nextProduct();
@@ -184,7 +161,6 @@
       startAutoSlide();
     });
 
-    // Обробники подій для індикаторів
     indicators.forEach((indicator, index) => {
       indicator.addEventListener('click', () => {
         stopAutoSlide();
@@ -194,7 +170,6 @@
       });
     });
 
-    // Запуск автоматичної зміни
     startAutoSlide();
   });
 </script>
