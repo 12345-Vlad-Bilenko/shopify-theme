@@ -1,5 +1,8 @@
 <div style="text-align: center; margin-top: 20px;">
   <div style="display: inline-block; background-color: red; color: white; padding: 20px; border-radius: 5px;">
     <p style="margin: 0; font-size: 18px;">{{ product.title }}</p>
+    {% if product.selected_or_first_available_variant.option1 %}
+      <p style="margin: 0; font-size: 16px; color: #fff;">Обраний колір: {{ product.selected_or_first_available_variant.option1 }}</p>
+    {% endif %}
   </div>
 </div>
