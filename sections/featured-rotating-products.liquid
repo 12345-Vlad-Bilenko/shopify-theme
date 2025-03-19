@@ -81,28 +81,6 @@
         border-radius: 5px;
         font-size: 14px;
     }
-
-    @keyframes slideIn {
-        from {
-            opacity: 0;
-            transform: translateX(-50px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    @keyframes slideOut {
-        from {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        to {
-            opacity: 0;
-            transform: translateX(50px);
-        }
-    }
 </style>
 
 <script>
@@ -167,11 +145,6 @@
                     updateSlider();
                 });
             }
-
-            // Додаємо анімацію
-            productItems.forEach(item => {
-                item.style.animation = 'slideIn 0.5s ease-in-out';
-            });
         }
 
         // Функція для автоматичного перемикання
