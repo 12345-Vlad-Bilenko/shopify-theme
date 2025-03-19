@@ -1,34 +1,20 @@
 <div style="text-align: center; margin-top: 20px;">
-  <div id="color-block" style="display: inline-block; background-color: red; color: white; padding: 20px; border-radius: 5px;">
+  <div style="display: inline-block; background-color: red; color: white; padding: 20px; border-radius: 5px;">
     <p style="margin: 0; font-size: 18px;">{{ product.title }}</p>
-    <p id="selected-color" style="margin: 0; font-size: 16px; color: #fff;">
-      Обраний колір: {{ product.selected_or_first_available_variant.option1 }}
-    </p>
+    
+    {% if product.selected_or_first_available_variant.option1 %}
+      <p style="margin: 0; font-size: 16px; color: #fff;">Обраний колір: {{ product.selected_or_first_available_variant.option1 }}</p>
+    {% endif %}
+
+    {% if product.variants.size > 1 %}
+      <p style="margin: 10px 0; font-size: 16px; color: #fff;">Доступні кольори:</p>
+      <ul style="list-style-type: none; padding: 0;">
+        {% for variant in product.variants %}
+          {% if variant.option1 %}
+            <li style="font-size: 16px; color: #fff;">{{ variant.option1 }}</li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    {% endif %}
   </div>
 </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const colorBlock = document.getElementById('color-block');
-    const selectedColor = document.getElementById('selected-color');
-
-    // Функція для оновлення кольору на сторінці
-    function updateColor() {
-      const selectedVariant = {{ product.selected_or_first_available_variant | json }};
-      const color = selectedVariant.option1 || 'Невідомий колір';  // Відображає колір з першої опції
-
-      // Оновлюємо текст для вибраного кольору
-      selectedColor.textContent = `Обраний колір: ${color}`;
-    }
-
-    // Додаємо слухач подій на зміни варіанту
-    const variantPicker = document.querySelector('select[name="id"]');  // Поле вибору варіанту
-
-    if (variantPicker) {
-      variantPicker.addEventListener('change', updateColor);
-    }
-
-    // Оновлюємо колір при першому завантаженні сторінки
-    updateColor();
-  });
-</script>
