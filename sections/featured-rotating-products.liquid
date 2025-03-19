@@ -1,60 +1,49 @@
 <div id="product-slider">
-    <p>Number of products: {{ collections.all.products.size }}</p>
-    <div class="slider-container">
-        <div class="product-items">
-            {% for product in collections.all.products %}
-                <div class="product-item {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}">
-                    <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
-                    <p>{{ product.title }}</p>
-                    <p>{{ product.price | money }}</p>
-                    <a href="{{ product.url }}" class="btn btn-primary">View Product</a>
-                </div>
-            {% endfor %}
+  <p>Number of products: {{ collections.all.products.size }}</p>
+  <div class="slider-container">
+    {% for product in collections.all.products %}
+      <div class="product-item {% if forloop.first %}active{% else %}inactive{% endif %}" data-index="{{ forloop.index0 }}">
+        <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
+        <div class="product-info">
+          <p>{{ product.title }}</p>
+          <p>{{ product.price | money }}</p>
+          <a href="{{ product.url }}" class="btn btn-primary">View Product</a>
         </div>
-    </div>
+      </div>
+    {% endfor %}
+  </div>
 </div>
 
 <style>
   #product-slider {
     text-align: center;
     position: relative;
-    max-width: 1200px;
+    max-width: 800px;
     margin: 0 auto;
-    padding: 20px;
   }
 
   .slider-container {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 10px;
     position: relative;
   }
 
-  .product-items {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-  }
-
   .product-item {
-    flex: 0 0 30%;
     text-align: center;
-    padding: 20px;
+    padding: 15px;
     border: 1px solid #ddd;
     border-radius: 10px;
     background-color: #f9f9f9;
     transition: all 0.3s ease;
-    opacity: 0.5;
-    transform: scale(0.9);
     cursor: pointer;
+    opacity: 0.6;
   }
 
   .product-item.active {
-    flex: 0 0 40%;
+    transform: scale(1.2);
     opacity: 1;
-    transform: scale(1);
-    cursor: default;
   }
 
   .product-item img {
@@ -63,45 +52,32 @@
     border-radius: 10px;
   }
 
-  .product-item p {
-    margin: 10px 0;
+  .product-info {
+    display: none;
   }
 
-  .btn {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
+  .product-item.active .product-info {
+    display: block;
   }
 </style>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const productItems = document.querySelectorAll('.product-item');
+  document.addEventListener("DOMContentLoaded", function () {
+    const productItems = document.querySelectorAll(".product-item");
     let currentIndex = 0;
 
     function showProduct(index) {
       productItems.forEach((item, i) => {
-        if (i === index) {
-          item.classList.add('active');
-        } else {
-          item.classList.remove('active');
-        }
+        item.classList.toggle("active", i === index);
+        item.classList.toggle("inactive", i !== index);
       });
     }
 
     productItems.forEach((item, index) => {
-      item.addEventListener('click', () => {
-        if (!item.classList.contains('active')) {
-          currentIndex = index;
-          showProduct(currentIndex);
-        }
+      item.addEventListener("click", () => {
+        currentIndex = index;
+        showProduct(currentIndex);
       });
     });
-
-    // Initialize the first product as active
-    showProduct(currentIndex);
   });
 </script>
