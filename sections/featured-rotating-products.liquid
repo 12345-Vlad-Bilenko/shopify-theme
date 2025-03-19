@@ -1,5 +1,4 @@
-<div id="shopify-section-template--24432609624356__featured_rotating_products" class="shopify-section">
-  <div id="product-slider">
+<div id="product-slider">
     <p>Number of products: {{ collections.all.products.size }}</p>
     <div class="slider-container">
       <button id="prev-btn" class="slider-arrow" disabled>‹</button>
@@ -20,7 +19,6 @@
         <span class="indicator {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}"></span>
       {% endfor %}
     </div>
-  </div>
 </div>
 
 <style>
