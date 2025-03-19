@@ -1,16 +1,25 @@
-<div id="product-slider">
-  <p>Number of products: {{ collections.all.products.size }}</p>
-  <div class="slider-container">
-    {% for product in collections.all.products %}
-      <div class="product-item {% if forloop.first %}active{% else %}inactive{% endif %}" data-index="{{ forloop.index0 }}">
-        <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
-        <div class="product-info">
-          <p>{{ product.title }}</p>
-          <p>{{ product.price | money }}</p>
-          <a href="{{ product.url }}" class="btn btn-primary">View Product</a>
-        </div>
+<div id="shopify-section-template--24432609624356__featured_rotating_products" class="shopify-section">
+  <div id="product-slider">
+    <p>Number of products: {{ collections.all.products.size }}</p>
+    <div class="slider-container">
+      <button id="prev-btn" class="slider-arrow" disabled>‹</button>
+      <div class="product-items">
+        {% for product in collections.all.products %}
+          <div class="product-item {% if forloop.first %}active{% endif %}">
+            <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
+            <p>{{ product.title }}</p>
+            <p>{{ product.price | money }}</p>
+            <a href="{{ product.url }}" class="btn btn-primary">View Product</a>
+          </div>
+        {% endfor %}
       </div>
-    {% endfor %}
+      <button id="next-btn" class="slider-arrow">›</button>
+    </div>
+    <div class="slider-indicators">
+      {% for product in collections.all.products %}
+        <span class="indicator {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}"></span>
+      {% endfor %}
+    </div>
   </div>
 </div>
 
@@ -25,25 +34,27 @@
   .slider-container {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  .product-items {
+    flex: 1;
+    overflow: hidden;
     position: relative;
   }
 
   .product-item {
+    display: none;
     text-align: center;
-    padding: 15px;
+    padding: 20px;
     border: 1px solid #ddd;
     border-radius: 10px;
     background-color: #f9f9f9;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    opacity: 0.6;
   }
 
   .product-item.active {
-    transform: scale(1.2);
-    opacity: 1;
+    display: block;
   }
 
   .product-item img {
@@ -52,32 +63,113 @@
     border-radius: 10px;
   }
 
-  .product-info {
-    display: none;
+  .product-item p {
+    margin: 10px 0;
   }
 
-  .product-item.active .product-info {
-    display: block;
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+  }
+
+  .slider-arrow {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 10px;
+  }
+
+  .slider-arrow:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+  }
+
+  .slider-indicators {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .indicator {
+    width: 10px;
+    height: 10px;
+    background-color: #ccc;
+    border-radius: 50%;
+    margin: 0 5px;
+    cursor: pointer;
+  }
+
+  .indicator.active {
+    background-color: #007bff;
   }
 </style>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const productItems = document.querySelectorAll(".product-item");
+  document.addEventListener("DOMContentLoaded", function() {
+    const productItems = document.querySelectorAll('.product-item');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const indicators = document.querySelectorAll('.indicator');
     let currentIndex = 0;
+    let autoSlideInterval;
 
     function showProduct(index) {
       productItems.forEach((item, i) => {
-        item.classList.toggle("active", i === index);
-        item.classList.toggle("inactive", i !== index);
+        item.classList.toggle('active', i === index);
       });
+
+      indicators.forEach((indicator, i) => {
+        indicator.classList.toggle('active', i === index);
+      });
+
+      prevBtn.disabled = index === 0;
+      nextBtn.disabled = index === productItems.length - 1;
     }
 
-    productItems.forEach((item, index) => {
-      item.addEventListener("click", () => {
+    function nextProduct() {
+      currentIndex = (currentIndex + 1) % productItems.length;
+      showProduct(currentIndex);
+    }
+
+    function prevProduct() {
+      currentIndex = (currentIndex - 1 + productItems.length) % productItems.length;
+      showProduct(currentIndex);
+    }
+
+    function startAutoSlide() {
+      autoSlideInterval = setInterval(nextProduct, 5000);
+    }
+
+    function stopAutoSlide() {
+      clearInterval(autoSlideInterval);
+    }
+
+    nextBtn.addEventListener('click', () => {
+      stopAutoSlide();
+      nextProduct();
+      startAutoSlide();
+    });
+
+    prevBtn.addEventListener('click', () => {
+      stopAutoSlide();
+      prevProduct();
+      startAutoSlide();
+    });
+
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', () => {
+        stopAutoSlide();
         currentIndex = index;
         showProduct(currentIndex);
+        startAutoSlide();
       });
     });
+
+    startAutoSlide();
   });
 </script>
