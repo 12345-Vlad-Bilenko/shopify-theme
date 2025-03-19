@@ -1,15 +1,13 @@
 <div id="product-slider">
-    <p>Кількість продуктів: {{ collections.all.products.size }}</p>
+    <p>Number of products: {{ collections.all.products.size }}</p>
     <div class="slider-container">
-        <div class="product-wrapper">
+        <div class="product-items">
             {% for product in collections.all.products %}
                 <div class="product-item {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}">
                     <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
-                    <div class="product-info">
-                        <p class="title">{{ product.title }}</p>
-                        <p class="price">{{ product.price | money }}</p>
-                        <a href="{{ product.url }}" class="btn btn-primary">Купити</a>
-                    </div>
+                    <p>{{ product.title }}</p>
+                    <p>{{ product.price | money }}</p>
+                    <a href="{{ product.url }}" class="btn btn-primary">View Product</a>
                 </div>
             {% endfor %}
         </div>
@@ -17,110 +15,93 @@
 </div>
 
 <style>
-    #product-slider {
-        text-align: center;
-        position: relative;
-        max-width: 900px; /* Збільшено максимальну ширину */
-        margin: 0 auto;
-    }
+  #product-slider {
+    text-align: center;
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
 
-    .slider-container {
-        display: flex;
-        justify-content: center; /* Центруємо вміст */
-        align-items: center;
-        position: relative;
-    }
+  .slider-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
 
-    .product-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 20px; /* Відстань між продуктами */
-    }
+  .product-items {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
 
-    .product-item {
-        text-align: left; /* Вирівнюємо текст зліва */
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        background-color: #f9f9f9;
-        cursor: pointer;
-        transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, width 0.3s ease-in-out;
-        width: 250px; /* Базова ширина */
-    }
+  .product-item {
+    flex: 0 0 30%;
+    text-align: center;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+    opacity: 0.5;
+    transform: scale(0.9);
+    cursor: pointer;
+  }
 
-    .product-item.active {
-        opacity: 1;
-        width: 300px; /* Збільшена ширина для активного елемента */
-        transform: scale(1.1); /* Невелике збільшення при активації */
-        z-index: 10; /* Забезпечуємо відображення над іншими елементами */
-    }
+  .product-item.active {
+    flex: 0 0 40%;
+    opacity: 1;
+    transform: scale(1);
+    cursor: default;
+  }
 
-    .product-item:not(.active) {
-        opacity: 0.5;
-        width: 200px; /* Зменшена ширина для неактивних елементів */
-    }
+  .product-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
 
-    .product-item img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 10px;
-        margin-bottom: 10px;
-    }
+  .product-item p {
+    margin: 10px 0;
+  }
 
-    .product-info {
-        text-align: left;
-    }
-
-    .product-item p {
-        margin: 5px 0;
-    }
-
-    .product-item .title {
-        font-weight: bold;
-    }
-
-    .btn {
-        display: inline-block;
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: #fff;
-        text-decoration: none;
-        border-radius: 5px;
-        margin-top: 10px;
-    }
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+  }
 </style>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const productItems = document.querySelectorAll('.product-item');
-        const productWrapper = document.querySelector('.product-wrapper');
-        let currentIndex = 0;
+  document.addEventListener("DOMContentLoaded", function() {
+    const productItems = document.querySelectorAll('.product-item');
+    let currentIndex = 0;
 
-        function showProduct(index) {
-            productItems.forEach((item, i) => {
-                item.classList.toggle('active', i === index);
-            });
-
-            // Центруємо активний елемент
-            const activeItem = productItems[index];
-            const wrapperWidth = productWrapper.offsetWidth;
-            const activeItemWidth = activeItem.offsetWidth;
-            const scrollLeft = activeItem.offsetLeft - (wrapperWidth - activeItemWidth) / 2;
-
-            productWrapper.scrollTo({
-                left: scrollLeft,
-                behavior: 'smooth'
-            });
+    function showProduct(index) {
+      productItems.forEach((item, i) => {
+        if (i === index) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
         }
+      });
+    }
 
-        productItems.forEach((item, index) => {
-            item.addEventListener('click', () => {
-                currentIndex = index;
-                showProduct(currentIndex);
-            });
-        });
-
-        // Показуємо початковий активний продукт
-        showProduct(currentIndex);
+    productItems.forEach((item, index) => {
+      item.addEventListener('click', () => {
+        if (!item.classList.contains('active')) {
+          currentIndex = index;
+          showProduct(currentIndex);
+        }
+      });
     });
+
+    // Initialize the first product as active
+    showProduct(currentIndex);
+  });
 </script>
