@@ -1,0 +1,48 @@
+<div class="custom-header-bar">
+  
+  <!-- 1. ТЕЛЕФОНИ -->
+  <div class="header-contacts">
+    <a href="#" class="dropdown-toggle">
+      +380639995858 <span class="arrow">▼</span>
+    </a>
+    <ul class="dropdown-list">
+      <li>
+        <a href="tel:+380684456956">+380684456956</a>
+      </li>
+      <li>
+        <a href="tel:0800357222">0 800 357 222</a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- 2. ЗВОРОТНІЙ ДЗВІНОК -->
+  <div class="callback-header">
+    <a href="#" onclick="openCallbackPopup()">
+      <span class="callback-title">Зворотній дзвінок</span>
+    </a>
+  </div>
+
+  <!-- 3. ЛОГОТИП -->
+  <a href="{{ routes.root_url }}">
+    <img src="https://vinnitsakristall.com/media/logo/default/logo_7.png" alt="Логотип" class="custom-logo">
+  </a>
+
+</div>
+
+<!-- POPUP -->
+<div id="callback-popup" class="callback-popup">
+  <div class="popup-inner">
+    <h2>Зворотній дзвінок</h2>
+    <p>Залиште свій номер телефону та ім’я — ми зателефонуємо.</p>
+    <form action="https://vinnitsakristall.com/customercallbacks/index/callback/" method="post">
+      <label for="name">Ваше ім’я</label>
+      <input type="text" name="name" required>
+
+      <label for="phone">Телефон</label>
+      <input type="tel" name="phone" required>
+
+      <button type="submit" class="btn-submit">Відправити</button>
+    </form>
+    <button onclick="closeCallbackPopup()" class="btn-close">Закрити</button>
+  </div>
+</div>
