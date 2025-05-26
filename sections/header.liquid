@@ -242,7 +242,127 @@
       </div>
     {% endif %}
   {% endfor %}
+  <div class="custom-header-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; gap: 20px;">
   
+  <!-- 1. ТЕЛЕФОНИ -->
+  <div class="header-contacts" style="position: relative; display: inline-block;">
+    <a href="#" class="dropdown-toggle" style="text-decoration: none; font-weight: bold; color: #000;">
+      +380639995858 <span style="margin-left: 5px;">▼</span>
+    </a>
+    <ul class="dropdown-list" style="
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      padding: 10px;
+      margin: 0;
+      list-style: none;
+      z-index: 10;
+    ">
+      <li style="margin-bottom: 5px;">
+        <a href="tel:+380684456956" style="color: #000;">+380684456956</a>
+      </li>
+      <li>
+        <a href="tel:0800357222" style="color: #000;">0 800 357 222</a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- 2. ЗВОРОТНІЙ ДЗВІНОК -->
+  <div class="callback-header" style="font-size: 14px; line-height: 36px;">
+    <a href="#" onclick="openCallbackPopup()" style="text-decoration: none; color: #000; transition: color 0.2s;">
+      <span class="callback-title">Зворотній дзвінок</span>
+    </a>
+  </div>
+
+  <!-- 3. ЛОГОТИП -->
+  <a href="{{ routes.root_url }}">
+    <img src="https://vinnitsakristall.com/media/logo/default/logo_7.png" alt="Логотип" style="height: 50px;">
+  </a>
+
+  <!-- 4-6: ДОПОВНЕННЯ ПІЗНІШЕ -->
+
+</div>
+
+<!-- 🟧 POPUP (форма зворотного зв’язку) -->
+<div id="callback-popup" style="
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+">
+  <div style="
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+  ">
+    <h2>Зворотній дзвінок</h2>
+    <p>Залиште свій номер телефону та ім’я — ми зателефонуємо.</p>
+    <form action="https://vinnitsakristall.com/customercallbacks/index/callback/" method="post">
+      <label for="name">Ваше ім’я</label>
+      <input type="text" name="name" required style="width: 100%; margin-bottom: 10px; padding: 8px;">
+
+      <label for="phone">Телефон</label>
+      <input type="tel" name="phone" required style="width: 100%; margin-bottom: 10px; padding: 8px;">
+
+      <button type="submit" style="background-color: #ee7a52; color: white; padding: 10px 20px; border: none; border-radius: 5px;">Відправити</button>
+    </form>
+    <br>
+    <button onclick="closeCallbackPopup()" style="margin-top: 10px;">Закрити</button>
+  </div>
+</div>
+
+<style>
+  .callback-header a:hover {
+    color: #ee7a52 !important;
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector('.dropdown-toggle');
+  const dropdown = document.querySelector('.dropdown-list');
+
+  if (toggle && dropdown) {
+    toggle.addEventListener('mouseenter', () => {
+      dropdown.style.display = 'block';
+    });
+    toggle.addEventListener('mouseleave', () => {
+      dropdown.style.display = 'none';
+    });
+    dropdown.addEventListener('mouseenter', () => {
+      dropdown.style.display = 'block';
+    });
+    dropdown.addEventListener('mouseleave', () => {
+      dropdown.style.display = 'none';
+    });
+  }
+
+  document.querySelectorAll('.dropdown-list a').forEach(link => {
+    link.addEventListener('mouseenter', () => {
+      link.style.color = '#ee7a52';
+    });
+    link.addEventListener('mouseleave', () => {
+      link.style.color = '#000';
+    });
+  });
+
+  function openCallbackPopup() {
+    document.getElementById('callback-popup').style.display = 'flex';
+  }
+
+  function closeCallbackPopup() {
+    document.getElementById('callback-popup').style.display = 'none';
+  }
+</script>
+
 //end test
   {% if navigation_bar != blank %}
     <div class="header__row header__row--mobile desktop:hidden color-{{ section.settings.color_scheme_bottom }}">
