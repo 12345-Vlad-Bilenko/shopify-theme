@@ -270,15 +270,54 @@
     </ul>
   </div>
 
-<!-- 2. ЗВОРОТНІЙ ДЗВІНОК -->
-<div class="callback callback-header links-wrapper-separators item item-left container_header_primary_left_1 std" id="callback-main">
-  <ul class="links" id="callback-header" style="list-style: none; margin: 0; padding: 0;">
-    <li class="nav-item level0 level-top right" style="float: right !important; font-size: 14px; line-height: 36px;">
-      <a class="level-top fancybox" href="#callbacks" style="text-decoration: none; color: #000; transition: color 0.2s;">
-        <span class="callback-title">Зворотній дзвінок</span>
-      </a>
-    </li>
-  </ul>
+  <!-- 2. ЗВОРОТНІЙ ДЗВІНОК -->
+  <div class="callback-header" style="font-size: 14px; line-height: 36px;">
+    <a href="#" onclick="openCallbackPopup()" style="text-decoration: none; color: #000; transition: color 0.2s;">
+      <span class="callback-title">Зворотній дзвінок</span>
+    </a>
+  </div>
+
+  <!-- 3. ЛОГОТИП -->
+  <a href="{{ routes.root_url }}">
+    <img src="https://vinnitsakristall.com/media/logo/default/logo_7.png" alt="Логотип" style="height: 50px;">
+  </a>
+
+  <!-- 4-6: ДОПОВНЕННЯ ПІЗНІШЕ -->
+
+</div>
+
+<!-- 🟧 POPUP (форма зворотного зв’язку) -->
+<div id="callback-popup" style="
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+">
+  <div style="
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+  ">
+    <h2>Зворотній дзвінок</h2>
+    <p>Залиште свій номер телефону та ім’я — ми зателефонуємо.</p>
+    <form action="https://vinnitsakristall.com/customercallbacks/index/callback/" method="post">
+      <label for="name">Ваше ім’я</label>
+      <input type="text" name="name" required style="width: 100%; margin-bottom: 10px; padding: 8px;">
+
+      <label for="phone">Телефон</label>
+      <input type="tel" name="phone" required style="width: 100%; margin-bottom: 10px; padding: 8px;">
+
+      <button type="submit" style="background-color: #ee7a52; color: white; padding: 10px 20px; border: none; border-radius: 5px;">Відправити</button>
+    </form>
+    <br>
+    <button onclick="closeCallbackPopup()" style="margin-top: 10px;">Закрити</button>
+  </div>
 </div>
 
 <style>
@@ -286,17 +325,6 @@
     color: #ee7a52 !important;
   }
 </style>
-
-  <!-- 3. ЛОГОТИП -->
-  <a href="{{ routes.root_url }}">
-    <img src="https://vinnitsakristall.com/media/logo/default/logo_7.png" alt="Логотип" style="height: 50px;">
-  </a>
-
-  <!-- 4. Поле пошуку (буде додано) -->
-  <!-- 5. Кнопка порівняння (буде додано) -->
-  <!-- 6. Кошик (буде додано) -->
-
-</div>
 
 <script>
   const toggle = document.querySelector('.dropdown-toggle');
@@ -317,7 +345,6 @@
     });
   }
 
-  // Hover-ефект для номерів
   document.querySelectorAll('.dropdown-list a').forEach(link => {
     link.addEventListener('mouseenter', () => {
       link.style.color = '#ee7a52';
@@ -326,6 +353,14 @@
       link.style.color = '#000';
     });
   });
+
+  function openCallbackPopup() {
+    document.getElementById('callback-popup').style.display = 'flex';
+  }
+
+  function closeCallbackPopup() {
+    document.getElementById('callback-popup').style.display = 'none';
+  }
 </script>
 
 //end test
