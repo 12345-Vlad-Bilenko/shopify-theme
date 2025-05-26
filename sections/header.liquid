@@ -212,7 +212,20 @@
       endif
     %}
 
-
+    {% capture content %}
+      {% render 'header-row',
+        row: row,
+        order: order,
+        settings: section.settings,
+        first: first,
+        logo: logo,
+        menu: menu,
+        actions: actions,
+        localization: localization_markup,
+        search: search,
+        mobile_search: mobile_search
+      %}
+    {% endcapture %}
 
     {% assign content = content | strip %}
     {% if content != blank %}
