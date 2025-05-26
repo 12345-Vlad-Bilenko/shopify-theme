@@ -242,14 +242,9 @@
       </div>
     {% endif %}
   {% endfor %}
-<div class="custom-header-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; gap: 20px;">
+  <div class="custom-header-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; gap: 20px;">
   
-  <!-- ЛОГОТИП -->
-  <a href="{{ routes.root_url }}">
-    <img src="https://vinnitsakristall.com/media/logo/default/logo_7.png" alt="Логотип" style="height: 50px;">
-  </a>
-
-  <!-- ТЕЛЕФОНИ -->
+  <!-- 1. ТЕЛЕФОНИ -->
   <div class="header-contacts" style="position: relative; display: inline-block;">
     <a href="#" class="dropdown-toggle" style="text-decoration: none; font-weight: bold; color: #000;">
       +380639995858 <span style="margin-left: 5px;">▼</span>
@@ -275,12 +270,25 @@
     </ul>
   </div>
 
-  <!-- ЗВОРОТНІЙ ЗВ’ЯЗОК -->
-  <div class="callback-header">
-    <a href="#callbacks" style="text-decoration: none; padding: 5px 10px; background: #ee7a52; color: #fff; border-radius: 5px;">
-      Зворотній дзвінок
-    </a>
+  <!-- 2. ЗВОРОТНІЙ ДЗВІНОК -->
+  <div class="callback callback-header links-wrapper-separators item item-left container_header_primary_left_1 std" id="callback-main">
+    <ul class="links" id="callback-header" style="list-style: none; margin: 0; padding: 0;">
+      <li class="nav-item level0 level-top right" style="float: right !important; font-size: 14px; line-height: 36px;">
+        <a class="level-top fancybox" href="#callbacks" style="text-decoration: none;">
+          <span class="callback-title">Зворотній дзвінок</span>
+        </a>
+      </li>
+    </ul>
   </div>
+
+  <!-- 3. ЛОГОТИП -->
+  <a href="{{ routes.root_url }}">
+    <img src="https://vinnitsakristall.com/media/logo/default/logo_7.png" alt="Логотип" style="height: 50px;">
+  </a>
+
+  <!-- 4. Поле пошуку (буде додано) -->
+  <!-- 5. Кнопка порівняння (буде додано) -->
+  <!-- 6. Кошик (буде додано) -->
 
 </div>
 
@@ -303,7 +311,7 @@
     });
   }
 
-  // Зміна кольору при наведенні
+  // Hover-ефект для номерів
   document.querySelectorAll('.dropdown-list a').forEach(link => {
     link.addEventListener('mouseenter', () => {
       link.style.color = '#ee7a52';
@@ -314,6 +322,7 @@
   });
 </script>
 
+//end test
   {% if navigation_bar != blank %}
     <div class="header__row header__row--mobile desktop:hidden color-{{ section.settings.color_scheme_bottom }}">
       {{ navigation_bar }}
