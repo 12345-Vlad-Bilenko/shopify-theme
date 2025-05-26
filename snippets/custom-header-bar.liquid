@@ -1,43 +1,48 @@
+<!-- ХЕДЕР -->
 <div class="custom-header-bar">
-  
-  <!-- 1. ТЕЛЕФОНИ -->
-  <div class="header-contacts">
-    <a href="#" class="dropdown-toggle">
-      +380639995858 <span class="arrow">▼</span>
+
+  <!-- ЛІВА ЧАСТИНА: Контакти та зворотній дзвінок -->
+  <div class="header-left">
+    <div class="header-contacts">
+      <a href="#" class="dropdown-toggle">
+        +380639995858 <span class="arrow">▼</span>
+      </a>
+      <ul class="dropdown-list">
+        <li>
+          <a href="tel:+380684456956">+380684456956</a>
+        </li>
+        <li>
+          <a href="tel:0800357222">0 800 357 222</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="callback-header">
+      <a href="#" onclick="openCallbackPopup()">
+        <span class="callback-title">Зворотній дзвінок</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ЦЕНТРАЛЬНА ЧАСТИНА: Логотип -->
+  <div class="header-center">
+    <a href="{{ routes.root_url }}">
+      <img src="{{ 'logo_vinnitsakristall_header.png' | asset_url }}" alt="Логотип" style="height: 50px;">
     </a>
-    <ul class="dropdown-list">
-      <li>
-        <a href="tel:+380684456956">+380684456956</a>
-      </li>
-      <li>
-        <a href="tel:0800357222">0 800 357 222</a>
-      </li>
-    </ul>
   </div>
 
-  <!-- 2. ЗВОРОТНІЙ ДЗВІНОК -->
-  <div class="callback-header">
-    <a href="#" onclick="openCallbackPopup()">
-      <span class="callback-title">Зворотній дзвінок</span>
-    </a>
+  <!-- ПРАВА ЧАСТИНА: Пошук та корзина -->
+  <div class="header-right">
+    <div class="custom-header-tools">
+      <div class="custom-search-placeholder">
+        <span>Пошук (у розробці)</span>
+      </div>
+      <div class="custom-cart-placeholder">
+        <img src="{{ 'logo_vinnitsakristall_cart.png' | asset_url }}" alt="Корзина" style="height: 32px;">
+      </div>
+    </div>
   </div>
 
-  <!-- 3. ЛОГОТИП -->
-  <a href="{{ routes.root_url }}">
-    <img src="{{ 'logo_vinnitsakristall_header.png' | asset_url }}" alt="Логотип" style="height: 50px;">
-  </a>
-
-</div>
-
-<div class="custom-header-tools">
-  <div class="custom-search-placeholder">
-    <!-- Тут буде пошук -->
-    <span>Пошук (у розробці)</span>
-  </div>
-  <div class="custom-cart-placeholder">
-    <!-- Тут буде корзина -->
-    <span>Корзина (у розробці)</span>
-  </div>
 </div>
 
 <!-- POPUP -->

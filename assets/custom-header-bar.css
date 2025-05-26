@@ -6,11 +6,37 @@
   gap: 20px;
 }
 
-.header-contacts {
-  position: relative;
-  display: inline-block;
+/* Ліва колонка */
+.header-left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
+/* Центр — логотип */
+.header-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Права колонка: пошук і корзина */
+.header-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Телефони */
+.header-contacts {
+  position: relative;
+}
+
+/* Дропдаун */
 .dropdown-list {
   display: none;
   position: absolute;
@@ -24,6 +50,7 @@
   z-index: 10;
 }
 
+/* Зворотній дзвінок */
 .callback-header a {
   font-size: 14px;
   line-height: 36px;
@@ -36,6 +63,14 @@
   color: #ee7a52;
 }
 
+/* Плейсхолдери для пошуку/корзини */
+.custom-search-placeholder,
+.custom-cart-placeholder {
+  font-size: 14px;
+  color: #555;
+}
+
+/* Попап дзвінка */
 .callback-popup {
   display: none;
   position: fixed;
@@ -53,4 +88,26 @@
   border-radius: 8px;
   width: 90%;
   max-width: 500px;
+}
+
+
+.custom-header-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.custom-cart-placeholder img {
+  height: 32px;
+  width: auto;
+}
+.custom-header-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.custom-cart-placeholder img {
+  height: 32px;
+  width: auto;
 }
