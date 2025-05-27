@@ -754,6 +754,7 @@
         "group_UexM3L": {
           "type": "group",
           "name": "t:names.header",
+          "disabled": true,
           "settings": {
             "link": "",
             "open_in_new_tab": false,
@@ -793,6 +794,7 @@
             "text_ThDYtg": {
               "type": "text",
               "name": "t:names.text",
+              "disabled": true,
               "settings": {
                 "text": "<h3>Shop by collection</h3>",
                 "width": "fit-content",
@@ -842,6 +844,7 @@
             "collection_title_NdFVWg": {
               "type": "collection-title",
               "name": "t:names.collection_title",
+              "disabled": true,
               "settings": {
                 "collection": "{{ closest.collection }}",
                 "width": "fit-content",
